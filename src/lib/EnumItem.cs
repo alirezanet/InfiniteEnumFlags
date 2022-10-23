@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Text;
 
-namespace InfinateEnumFlags;
+namespace InfiniteEnumFlags;
 
 public sealed class EnumItem
 {

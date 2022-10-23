@@ -1,4 +1,4 @@
-namespace InfinateEnumFlags;
+namespace InfiniteEnumFlags;
 
 public class HexString
 {

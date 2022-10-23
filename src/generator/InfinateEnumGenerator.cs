@@ -4,10 +4,10 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace InfinateEnumFlags.Generator;
+namespace InfiniteEnumFlags.Generator;
 
 [Generator]
-public partial class InfinateEnumGenerator : ISourceGenerator
+public partial class InfiniteEnumGenerator : ISourceGenerator
 {
     public void Initialize(GeneratorInitializationContext context)
     {
