@@ -1,6 +1,6 @@
 namespace InfiniteEnumFlags;
 
-public class HexString
+public sealed class HexString
 {
     public string Value { get; init; }
 
