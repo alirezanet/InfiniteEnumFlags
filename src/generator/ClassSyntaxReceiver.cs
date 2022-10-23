@@ -14,8 +14,8 @@ internal class ClassSyntaxReceiver : ISyntaxReceiver
     {
         var lst = new List<string>()
         {
-            "IBigFlagsArray",
-            "IBigFlagsIndexDictionary"
+            "IArrayFlags",
+            "IIndexDictionaryFlags"
         };
 
         if (syntaxNode is ClassDeclarationSyntax { BaseList.Types.Count: > 0 } classDeclarationSyntax &&
