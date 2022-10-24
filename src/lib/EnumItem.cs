@@ -105,7 +105,10 @@ public sealed class EnumItem
 
     public string ToHexString()
     {
-        return HexConverter.ToHexString(ToBytes());
+        var bytes = ToBytes();
+        // if (BitConverter.IsLittleEndian) // Not sure is necessary
+        Array.Reverse(bytes);
+        return HexConverter.ToHexString(bytes);
     }
 
     public byte[] ToBytes()
