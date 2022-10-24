@@ -23,6 +23,7 @@ public partial class InfiniteEnumGenerator : ISourceGenerator
         {
             var source = new StringBuilder();
             source.AppendLine("// auto-generated file");
+            source.AppendLine($"using InfiniteEnumFlags;");
             source.AppendLine($"namespace {GetNamespaceFrom(target)};");
             var cleanTarget = target.RemoveNodes(target.ChildNodes(), SyntaxRemoveOptions.KeepNoTrivia);
             cleanTarget = GenerateClassMembers(target, cleanTarget);
