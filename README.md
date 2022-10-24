@@ -8,7 +8,7 @@ However, enum specifically restricts to built-in numeric types which is a big pr
 because it is limited to 2^32 for `int` values that mean we only can have a maximum of 32 items
 in our enum or 2^64 for `long` that limits us to a maximum of 64 items. 
 
-this library aims to remove this restrictions and still give us the same functionality.
+this library aims to remove these restrictions and still give us the same functionality.
 
 
 ## Getting started
@@ -61,7 +61,7 @@ functionality. but I believe it is harder to manage.
 
 ### Usage
 
-To use your custom enum, it is important to be familiar with the built-in enum flags capabilities
+To use your custom enum, it is important to be familiar with the built-in dotnet enum flags capabilities
 because the functionalities are almost identical. 
 for example we can use all bitwise operators (`|`,`&`,`~`,`^`) in our custom enum.
 
