@@ -3,6 +3,10 @@ using System.Runtime.CompilerServices;
 
 namespace InfiniteEnumFlags;
 
+/// <summary>
+/// This is dotnet 5+ HexConverter,
+/// <see href="https://github.com/dotnet/runtime/blob/main/src/libraries/Common/src/System/HexConverter.cs">Original source</see>
+/// </summary>
 internal static class HexConverter
 {
     /// <summary>
