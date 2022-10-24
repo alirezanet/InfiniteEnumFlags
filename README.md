@@ -6,10 +6,9 @@
 The dotnet enum flags feature is amazing, but it is too limited 🙁. InfiniteEnumFlags is the same without limitation. 😊
 
 ## Introduction
-Dotnet Enum has a `[Flags]` attribute that gives up the ability to have a binary enum system and use bitwise operators.
-However, enum specifically restricts to built-in numeric types which is a big problem 
-because it is limited to 2^32 for `int` values that mean we only can have a maximum of 32 items
-in our enum or 2^64 for `long` that limits us to a maximum of 64 items. 
+Dotnet Enum has an `[Flags]` attribute that gives us the ability to have a binary enum system and use bitwise operators. 
+However, enum specifically restricts to built-in numeric types which is a big problem because it is limited to 2^32 for `int` 
+values which means we only can have a maximum of 32 items in our enum or 2^64 for `long` which limits us to a maximum of 64 items.
 
 this library aims to remove these restrictions and still give us the same functionality.
 
