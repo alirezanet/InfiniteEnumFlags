@@ -107,4 +107,17 @@ public class EnumItemTest
         (e1 == e2).Should().BeTrue();
     }
 
+    [Fact]
+    public void LeftShift_Operator()
+    {
+        // Arrange
+        var e1 = new EnumItem(3, 5);
+        var expected = new EnumItem(4, 5);
+
+        // Act
+        var actual = e1 << 20;
+
+        // Assert
+        actual.Equals(expected).Should().BeTrue();
+    }
 }

@@ -69,16 +69,25 @@ public sealed class EnumItem
         return new EnumItem(x.Not());
     }
 
+
+    public static EnumItem operator <<(EnumItem item, int count)
+    {
+        var x = (BitArray)item._bits.Clone();
+        return new EnumItem(x.LeftShift(count));
+    }
+    public static EnumItem operator >>(EnumItem item, int count)
+    {
+        return new EnumItem(item._bits.LeftShift(count));
+    }
+
     public override string ToString()
     {
         var sb = new StringBuilder();
-
         for (var i = _bits.Count - 1; i >= 0; i--)
         {
             var c = _bits[i] ? '1' : '0';
             sb.Append(c);
         }
-
         return sb.ToString();
     }
 
