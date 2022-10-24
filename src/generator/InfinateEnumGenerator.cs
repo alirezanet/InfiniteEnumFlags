@@ -137,8 +137,10 @@ public partial class InfiniteEnumGenerator : ISourceGenerator
     {
         var items = method
             .DescendantNodes().OfType<InitializerExpressionSyntax>()
-            .Single(q => q.IsKind(SyntaxKind.CollectionInitializerExpression))
+            .SingleOrDefault(q => q.IsKind(SyntaxKind.CollectionInitializerExpression))?
             .DescendantNodes().Where(q => q.IsKind(SyntaxKind.ComplexElementInitializerExpression));
+
+        if (items is null) return new List<string>();
 
         var lst = items.Select(item => item.DescendantNodes().OfType<LiteralExpressionSyntax>().ToArray())
             .Select(x => new
@@ -152,10 +154,12 @@ public partial class InfiniteEnumGenerator : ISourceGenerator
     public List<string> ParseArrayItems(MethodDeclarationSyntax method)
     {
         var items = method
-            .DescendantNodes().OfType<InitializerExpressionSyntax>().Single()
+            .DescendantNodes().OfType<InitializerExpressionSyntax>().SingleOrDefault()?
             .DescendantTokens().Where(q => q.IsKind(SyntaxKind.StringLiteralToken));
 
-        return items.Select(q => q.Value?.ToString()).ToList();
+        return items is null ?
+            new List<string>() :
+            items.Select(q => q.Value?.ToString()).ToList();
     }
 
     public static string GetNamespaceFrom(SyntaxNode s) =>
