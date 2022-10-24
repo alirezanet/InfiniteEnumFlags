@@ -13,6 +13,7 @@ in our enum or 2^64 for `long` that limits us to a maximum of 64 items.
 
 this library aims to remove these restrictions and still give us the same functionality.
 
+---
 
 ## Getting started
 After installing the InfiniteEnumFlags NuGet package, there are several ways to use this package. I start with the easiest one.
@@ -28,11 +29,11 @@ public partial class YourCustomEnumName : IArrayFlags
 {
     public string[] Items() => new[]
     {
-    //  Name -- Value 
-        "F1",  // 1   
-        "F2",  // 2
-        "F3",  // 4
-        "F4",  // 8
+    //  Name -- Value - Index - Bits 
+        "F1",  // 1   -   0   - 0001
+        "F2",  // 2   -   1   - 0010
+        "F3",  // 4   -   2   - 0100
+        "F4",  // 8   -   3   - 1000
     };
 }
 ```
@@ -56,11 +57,28 @@ public partial class YourCustomEnumName
 }
 ```
 
+`IIndexDictionaryFlags`e.g
+```csharp
+public partial class TestIndexDictionaryFlags : IIndexDictionaryFlags
+{
+    public Dictionary<string, int> Items() => new()
+    {
+      // Name, Order     Index - Value - Bits
+        { "F1", 2 }, //    2   -   4   - 100
+        { "F2", 0 }, //    0   -   1   - 001
+        { "F3", 1 }  //    1   -   2   - 010
+    };
+}
+```
+You can use the `IIndexDictionaryFlags` if you wanna take control of the item's order and values.
+
+
 #### 2. Manual
 In the previous example we saw the generated code using source generator. 
 The second way of creating Enums is to manually create this class which gives us the same
 functionality. but I believe it is harder to manage. 
 
+---
 
 ## Usage
 
@@ -72,6 +90,8 @@ e.g
 ```csharp
 var features = YourCustomEnumName.F1 | YourCustomEnumName.F3;  // (+) F1 + F3 
 ```
+
+---
 
 ## Support
 
