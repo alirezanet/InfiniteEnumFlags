@@ -1,16 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <RootNamespace>InfiniteEnumFlagsTests</RootNamespace>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>InfiniteEnumFlagsTests</RootNamespace>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="6.8.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
-    <PackageReference Include="xunit" Version="2.4.2" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FluentAssertions" Version="6.8.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+        <PackageReference Include="xunit" Version="2.4.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Rererence the source generator project -->
+        <ProjectReference Include="..\..\src\generator\generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />        <!-- Don't reference the generator dll -->
+
+        <!-- Rererence the lib project "treat as an analyzer"-->
+        <ProjectReference Include="..\..\src\lib\lib.csproj" ReferenceOutputAssembly="true" /> <!-- We DO reference the attributes dll -->
+    </ItemGroup>
 
 </Project>
