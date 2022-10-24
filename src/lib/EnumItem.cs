@@ -68,7 +68,7 @@ public sealed class EnumItem
 
     public string ToHexString()
     {
-        return BitConverter.ToString(ToBytes());
+        return HexConverter.ToHexString(ToBytes());
     }
 
     public byte[] ToBytes()
