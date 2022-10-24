@@ -1,5 +1,5 @@
 namespace InfiniteEnumFlags;
-public interface IBigFlagsIndexDictionary
+public interface IIndexDictionaryFlags
 {
     public Dictionary<string, int> Items();
 }
