@@ -32,6 +32,17 @@ public sealed class EnumItem
         _bits = new BitArray(new_value);
     }
 
+
+    public static bool operator ==(EnumItem item, EnumItem item2)
+    {
+        return item.Equals(item2);
+    }
+
+    public static bool operator !=(EnumItem item, EnumItem item2)
+    {
+        return !(item == item2);
+    }
+
     public static EnumItem operator |(EnumItem left, EnumItem right)
     {
         return new EnumItem(left._bits.Or(right._bits));
@@ -64,6 +75,32 @@ public sealed class EnumItem
         }
 
         return sb.ToString();
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is not EnumItem item) return false;
+
+        bool SequenceEqual(EnumItem bigger, EnumItem smaller)
+        {
+            var bytes = new byte[(bigger._bits.Length - 1) / 8 + 1];
+            smaller._bits.CopyTo(bytes, 0);
+            return bigger.ToBytes().SequenceEqual(bytes);
+        }
+
+        if (item._bits.Length > _bits.Length)
+            return SequenceEqual(item, this);
+
+        if (item._bits.Length < _bits.Length)
+            return SequenceEqual(this, item);
+
+        return item._bits.Length == _bits.Length &&
+               item._bits.Xor(_bits).OfType<bool>().All(e => !e);
+    }
+
+    public override int GetHashCode()
+    {
+        return _bits.GetHashCode() * 31;
     }
 
     public string ToHexString()
