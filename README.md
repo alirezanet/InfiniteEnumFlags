@@ -13,8 +13,6 @@ in our enum or 2^64 for `long` that limits us to a maximum of 64 items.
 
 this library aims to remove these restrictions and still give us the same functionality.
 
----
-
 ## Getting started
 After installing the InfiniteEnumFlags NuGet package, there are several ways to use this package. I start with the easiest one.
 ### Define your enum flags
@@ -59,6 +57,8 @@ public partial class YourCustomEnumName
 
 ---
 
+You can use the `IIndexDictionaryFlags` instead of `IArrayFlags` if you wanna take control of the item's order and values.
+
 `IIndexDictionaryFlags`e.g
 ```csharp
 public partial class TestIndexDictionaryFlags : IIndexDictionaryFlags
@@ -72,15 +72,11 @@ public partial class TestIndexDictionaryFlags : IIndexDictionaryFlags
     };
 }
 ```
-You can use the `IIndexDictionaryFlags` if you wanna take control of the item's order and values.
-
 
 #### 2. Manual
 In the previous example we saw the generated code using source generator. 
 The second way of creating Enums is to manually create this class which gives us the same
 functionality. but I believe it is harder to manage. 
-
----
 
 ## Usage
 
@@ -92,8 +88,6 @@ e.g
 ```csharp
 var features = YourCustomEnumName.F1 | YourCustomEnumName.F3;  // (+) F1 + F3 
 ```
-
----
 
 ## Support
 
