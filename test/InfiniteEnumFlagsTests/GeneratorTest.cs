@@ -1,4 +1,5 @@
 using FluentAssertions;
+using InfiniteEnumFlags;
 using Xunit;
 
 namespace InfiniteEnumFlagsTests;
@@ -6,14 +7,24 @@ namespace InfiniteEnumFlagsTests;
 public class GeneratorTests
 {
     [Fact]
-    public void name()
+    public void TestClass_MustHave_TotalItems_WithValueThree()
     {
         // Arrange
-
-        // Act
+        var x = new TestClass();
+        var field = x.GetType().GetField("TOTAL_ITEMS");
 
         // Assert
-        true.Should().BeTrue();
+        field.Should().NotBeNull();
+        field!.GetValue(x).Should().Be(3);
     }
 }
 
+public partial class TestClass : IArrayFlags
+{
+    public string[] Items() => new[]
+    {
+        "F1",
+        "F2",
+        "F3"
+    };
+}
