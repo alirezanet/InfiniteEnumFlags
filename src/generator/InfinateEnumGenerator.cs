@@ -24,7 +24,9 @@ public partial class InfiniteEnumGenerator : ISourceGenerator
             var source = new StringBuilder();
             source.AppendLine("// auto-generated file");
             source.AppendLine($"using InfiniteEnumFlags;");
-            source.AppendLine($"namespace {GetNamespaceFrom(target)};");
+            var @namespace = GetNamespaceFrom(target);
+            if (@namespace is not null)
+                source.AppendLine($"namespace {@namespace};");
             var cleanTarget = target.RemoveNodes(target.ChildNodes(), SyntaxRemoveOptions.KeepNoTrivia);
             cleanTarget = GenerateClassMembers(target, cleanTarget);
             source.AppendLine(cleanTarget.ToString());
@@ -162,7 +164,7 @@ public partial class InfiniteEnumGenerator : ISourceGenerator
             NamespaceDeclarationSyntax namespaceDeclarationSyntax => namespaceDeclarationSyntax.Name.ToString(),
             FileScopedNamespaceDeclarationSyntax fileScopedNamespaceDeclarationSyntax =>
                 fileScopedNamespaceDeclarationSyntax.Name.ToString(),
-            null => throw new Exception("Namespace not found"),
+            null => null,
             _ => GetNamespaceFrom(s.Parent)
         };
 }
