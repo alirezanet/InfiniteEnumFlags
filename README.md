@@ -1,5 +1,7 @@
 # InfiniteEnumFlags
 
+![GitHub](https://img.shields.io/github/license/alirezanet/InfiniteEnumFlags) ![Nuget](https://img.shields.io/nuget/dt/InfiniteEnumFlags?color=%239100ff) ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/InfiniteEnumFlags?label=latest) ![Nuget](https://img.shields.io/nuget/v/InfiniteEnumFlags?label=stable) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/alirezanet/InfiniteEnumFlags/Publish%20Packages?label=checks)
+
 The dotnet enum flags feature is amazing, but it is too limited 🙁. InfiniteEnumFlags is the same without limitation. 😊
 
 ## Introduction
@@ -59,7 +61,7 @@ The second way of creating Enums is to manually create this class which gives us
 functionality. but I believe it is harder to manage. 
 
 
-### Usage
+## Usage
 
 To use your custom enum, it is important to be familiar with the built-in dotnet enum flags capabilities
 because the functionalities are almost identical. 
@@ -70,7 +72,20 @@ e.g
 var features = YourCustomEnumName.F1 | YourCustomEnumName.F3;  // (+) F1 + F3 
 ```
 
+## Support
 
+- Don't forget to give a ⭐ on [GitHub](https://github.com/alirezanet/InfiniteEnumFlags)
+- Share your feedback and ideas to improve this tool
+- Share InfiniteEnumFlags on your favorite social media and your friends
+- Write a blog post about InfiniteEnumFlags
+
+## Contribution
+
+Feel free to send me a pull request!
+
+## License
+
+[MIT](https://github.com/alirezanet/InfiniteEnumFlags/blob/master/LICENSE)
 
 
 
