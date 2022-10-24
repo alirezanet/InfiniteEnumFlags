@@ -7,6 +7,11 @@ public sealed class EnumItem
 {
     private readonly BitArray _bits;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="index">zero is reserved for empty bits / None.</param>
+    /// <param name="length">Number of total required bits</param>
     public EnumItem(int index, int length)
     {
         // None
@@ -118,6 +123,7 @@ public sealed class EnumItem
         return ret;
     }
 
+    /// <inheritdoc cref="BitArray.CopyTo" />
     public void CopyTo(Array array, int index = 0)
     {
         _bits.CopyTo(array, index);
