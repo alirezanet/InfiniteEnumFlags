@@ -22,6 +22,7 @@ public sealed class EnumItem
     }
 
 
+
     public EnumItem(BitArray new_value)
     {
         _bits = new_value;
@@ -76,6 +77,11 @@ public sealed class EnumItem
         var ret = new byte[(_bits.Length - 1) / 8 + 1];
         _bits.CopyTo(ret, 0);
         return ret;
+    }
+
+    public BitArray ToBitArray()
+    {
+        return (_bits.Clone() as BitArray)!;
     }
 
     public static EnumItem FromHexString(HexString hex)
