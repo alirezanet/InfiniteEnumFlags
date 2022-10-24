@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System.Numerics;
 using FluentAssertions;
 using InfiniteEnumFlags;
 using Xunit;
@@ -16,7 +16,7 @@ public class EnumItemTest
     [InlineData(16)]
     [InlineData(25)]
     [InlineData(31)]
-    public void EnumItem_ToBitArray_Under32Values_ShouldReturnSameInt(int index)
+    public void ToBitArray_Under32Items_ShouldReturnSameInt(int index)
     {
         // Arrange
         var x = new EnumItem(index + 1, index + 1);
@@ -42,7 +42,7 @@ public class EnumItemTest
     [InlineData(16)]
     [InlineData(25)]
     [InlineData(31)]
-    public void EnumItem_ToBytes_Under32Values_ShouldReturnSameBytes(int index)
+    public void ToBytes_Under32Items_ShouldReturnSameBytes(int index)
     {
         // Arrange
         var x = new EnumItem(index + 1, index + 1);
@@ -57,5 +57,54 @@ public class EnumItemTest
     }
 
 
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(15)]
+    [InlineData(16)]
+    [InlineData(25)]
+    [InlineData(31)]
+    [InlineData(129)]
+    [InlineData(257)]
+    [InlineData(516)]
+    [InlineData(1024)]
+    [InlineData(81205)]
+    // [InlineData(9120595)]
+    public void ToHexString_Under32Items_ShouldReturnSameHex(int index)
+    {
+        // Arrange
+        var x = new EnumItem(index + 1, index + 1);
+        var integerValue = BigInteger.Pow(2, index);
+        var expected = integerValue.ToString("X")
+            .TrimStart('0');
+
+        // Act
+        var actual = x.ToHexString()
+            .TrimStart('0');
+
+        // Assert
+        actual.Should().Be(expected);
+        actual.Length.Should().BeGreaterThan(0);
+    }
+
+    [Theory]
+    [InlineData(5, 6)]
+    [InlineData(8, 4)]
+    [InlineData(11, 150)]
+    [InlineData(10, 10)]
+    public void TwoEnumItemWithDifferentLengthShouldBeEqual(int firstLength, int secondLength)
+    {
+        // Arrange
+        var valueIndex = Math.Min(firstLength, secondLength) - 3;
+        var e1 = new EnumItem(valueIndex, firstLength);
+        var e2 = new EnumItem(valueIndex, secondLength);
+
+        // Assert
+        e1.Equals(e2).Should().BeTrue();
+        (e1 == e2).Should().BeTrue();
+    }
 
 }
