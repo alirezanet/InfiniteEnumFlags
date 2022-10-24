@@ -57,6 +57,8 @@ public partial class YourCustomEnumName
 }
 ```
 
+---
+
 `IIndexDictionaryFlags`e.g
 ```csharp
 public partial class TestIndexDictionaryFlags : IIndexDictionaryFlags
