@@ -22,7 +22,6 @@ public sealed class EnumItem
     }
 
 
-
     public EnumItem(BitArray new_value)
     {
         _bits = new_value;
@@ -77,6 +76,11 @@ public sealed class EnumItem
         var ret = new byte[(_bits.Length - 1) / 8 + 1];
         _bits.CopyTo(ret, 0);
         return ret;
+    }
+
+    public void CopyTo(Array array, int index = 0)
+    {
+        _bits.CopyTo(array, index);
     }
 
     public BitArray ToBitArray()
