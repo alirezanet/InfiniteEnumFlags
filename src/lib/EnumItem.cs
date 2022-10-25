@@ -6,7 +6,7 @@ namespace InfiniteEnumFlags;
 
 public sealed class EnumItem
 {
-    private readonly BitArray _bits;
+    internal readonly BitArray Bits;
 
     /// <summary>
     /// 
@@ -18,24 +18,24 @@ public sealed class EnumItem
         // None
         if (index == 0)
         {
-            _bits = new BitArray(length, false);
+            Bits = new BitArray(length, false);
             return;
         }
 
         // Items
-        _bits = new BitArray(length, false);
-        _bits.Set(index - 1, true);
+        Bits = new BitArray(length, false);
+        Bits.Set(index - 1, true);
     }
 
 
     public EnumItem(BitArray new_value)
     {
-        _bits = new_value;
+        Bits = new_value;
     }
 
     public EnumItem(byte[] new_value)
     {
-        _bits = new BitArray(new_value);
+        Bits = new BitArray(new_value);
     }
 
 
@@ -51,22 +51,22 @@ public sealed class EnumItem
 
     public static EnumItem operator |(EnumItem left, EnumItem right)
     {
-        return new EnumItem(left._bits.Or(right._bits));
+        return new EnumItem(left.Bits.Or(right.Bits));
     }
 
     public static EnumItem operator &(EnumItem left, EnumItem right)
     {
-        return new EnumItem(left._bits.And(right._bits));
+        return new EnumItem(left.Bits.And(right.Bits));
     }
 
     public static EnumItem operator ^(EnumItem left, EnumItem right)
     {
-        return new EnumItem(left._bits.Xor(right._bits));
+        return new EnumItem(left.Bits.Xor(right.Bits));
     }
 
     public static EnumItem operator ~(EnumItem item)
     {
-        var x = (BitArray)item._bits.Clone();
+        var x = (BitArray)item.Bits.Clone();
         return new EnumItem(x.Not());
     }
 
@@ -74,9 +74,9 @@ public sealed class EnumItem
     {
         var sb = new StringBuilder();
 
-        for (var i = _bits.Count - 1; i >= 0; i--)
+        for (var i = Bits.Count - 1; i >= 0; i--)
         {
-            var c = _bits[i] ? '1' : '0';
+            var c = Bits[i] ? '1' : '0';
             sb.Append(c);
         }
 
@@ -89,24 +89,24 @@ public sealed class EnumItem
 
         bool SequenceEqual(EnumItem bigger, EnumItem smaller)
         {
-            var bytes = new byte[(bigger._bits.Length - 1) / 8 + 1];
-            smaller._bits.CopyTo(bytes, 0);
+            var bytes = new byte[(bigger.Bits.Length - 1) / 8 + 1];
+            smaller.Bits.CopyTo(bytes, 0);
             return bigger.ToBytes().SequenceEqual(bytes);
         }
 
-        if (item._bits.Length > _bits.Length)
+        if (item.Bits.Length > Bits.Length)
             return SequenceEqual(item, this);
 
-        if (item._bits.Length < _bits.Length)
+        if (item.Bits.Length < Bits.Length)
             return SequenceEqual(this, item);
 
-        return item._bits.Length == _bits.Length &&
-               item._bits.Xor(_bits).OfType<bool>().All(e => !e);
+        return item.Bits.Length == Bits.Length &&
+               ((BitArray)item.Bits.Clone()).Xor(Bits).OfType<bool>().All(e => !e);
     }
 
     public override int GetHashCode()
     {
-        return _bits.GetHashCode() * 31;
+        return Bits.GetHashCode() * 31;
     }
 
     public string ToHexString()
@@ -119,20 +119,20 @@ public sealed class EnumItem
 
     public byte[] ToBytes()
     {
-        var ret = new byte[(_bits.Length - 1) / 8 + 1];
-        _bits.CopyTo(ret, 0);
+        var ret = new byte[(Bits.Length - 1) / 8 + 1];
+        Bits.CopyTo(ret, 0);
         return ret;
     }
 
     /// <inheritdoc cref="BitArray.CopyTo" />
     public void CopyTo(Array array, int index = 0)
     {
-        _bits.CopyTo(array, index);
+        Bits.CopyTo(array, index);
     }
 
     public BitArray ToBitArray()
     {
-        return (_bits.Clone() as BitArray)!;
+        return (Bits.Clone() as BitArray)!;
     }
 
     public static EnumItem FromHexString(HexString hex)
