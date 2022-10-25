@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace InfiniteEnumFlags;
+namespace InfiniteEnumFlags.Internal;
 
 /// <summary>
 /// This is dotnet 5+ HexConverter,

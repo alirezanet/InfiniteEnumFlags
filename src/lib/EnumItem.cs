@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Text;
+using InfiniteEnumFlags.Internal;
 
 namespace InfiniteEnumFlags;
 

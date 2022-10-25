@@ -1,3 +1,5 @@
+using InfiniteEnumFlags.Internal;
+
 namespace InfiniteEnumFlags;
 
 public sealed class HexString
