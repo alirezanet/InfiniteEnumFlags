@@ -106,7 +106,7 @@ features.HasFlag(YourCustomEnumName.F2); // false
 ### Storing EnumItem's value
 
 Since we want to support more than 32 items in our enums, we can not store an integer
-value, luckily we can use EnumItem `ToBase64Key()` function to get a unique base64 key. and to convert it back to an
+value, luckily we can use EnumItem `ToBase64Key()` function to get a unique base64 key, and to convert it back to an
 EnumItem we can use `EnumItem.FromBase64()` static method.
 
 ```csharp
