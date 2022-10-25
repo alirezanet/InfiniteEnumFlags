@@ -125,7 +125,7 @@ public class EnumItemTest
     }
 
     [Fact]
-    public void FromBase64_SameLength()
+    public void FromBase64String_SameLength_MustHaveEqualBase64String()
     {
         // Arrange
         var flags = Enums.TestArrayFlags.F2 | Enums.TestArrayFlags.F129 | Enums.TestArrayFlags.F172;
@@ -139,7 +139,7 @@ public class EnumItemTest
     }
 
     [Fact]
-    public void Base64WithDifferentLength()
+    public void FromBase64String_WithDifferentLength_MustHaveEqualItems()
     {
         // Arrange
         var e1 = new EnumItem(5, 10);
@@ -159,5 +159,9 @@ public class EnumItemTest
         newEnum2.Should().Be(e1);
         newEnum2.Should().Be(e2);
         newEnum1.Should().Be(newEnum2);
+
+        base1.Should().NotBe(base2);
     }
+
+
 }
