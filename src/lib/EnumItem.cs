@@ -51,17 +51,20 @@ public sealed class EnumItem
 
     public static EnumItem operator |(EnumItem left, EnumItem right)
     {
-        return new EnumItem(left.Bits.Or(right.Bits));
+        var x = (BitArray)left.Bits.Clone();
+        return new EnumItem(x.Or(right.Bits));
     }
 
     public static EnumItem operator &(EnumItem left, EnumItem right)
     {
-        return new EnumItem(left.Bits.And(right.Bits));
+        var x = (BitArray)left.Bits.Clone();
+        return new EnumItem(x.And(right.Bits));
     }
 
     public static EnumItem operator ^(EnumItem left, EnumItem right)
     {
-        return new EnumItem(left.Bits.Xor(right.Bits));
+        var x = (BitArray)left.Bits.Clone();
+        return new EnumItem(x.Xor(right.Bits));
     }
 
     public static EnumItem operator ~(EnumItem item)
