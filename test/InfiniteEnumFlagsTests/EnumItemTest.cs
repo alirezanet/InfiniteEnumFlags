@@ -95,16 +95,18 @@ public class EnumItemTest
     [InlineData(8, 4)]
     [InlineData(11, 150)]
     [InlineData(10, 10)]
+    [InlineData(3, 4)]
+    [InlineData(4, 3)]
     public void TwoEnumItemWithDifferentLengthShouldBeEqual(int firstLength, int secondLength)
     {
         // Arrange
-        var valueIndex = Math.Min(firstLength, secondLength) - 3;
+        var valueIndex = Math.Min(firstLength, secondLength) - 2;
         var e1 = new EnumItem(valueIndex, firstLength);
         var e2 = new EnumItem(valueIndex, secondLength);
 
         // Assert
-        e1.Equals(e2).Should().BeTrue();
         (e1 == e2).Should().BeTrue();
+        e1.Equals(e2).Should().BeTrue();
     }
 
 }
