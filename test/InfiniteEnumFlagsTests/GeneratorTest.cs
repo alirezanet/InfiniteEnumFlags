@@ -14,6 +14,6 @@ public class GeneratorTests
 
         // Assert
         field.Should().NotBeNull();
-        field!.GetValue(x).Should().Be(3);
+        field!.GetValue(x).Should().Be(179);
     }
 }
