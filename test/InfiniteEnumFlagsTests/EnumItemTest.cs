@@ -109,4 +109,16 @@ public class EnumItemTest
         e1.Equals(e2).Should().BeTrue();
     }
 
+    [Fact]
+    public void TwoNoneShouldBeEqual()
+    {
+        // Arrange
+        var e1 = new EnumItem(0, 3);
+        var e2 = new EnumItem(0, 3);
+
+        // Assert
+        (e1 == e2).Should().BeTrue();
+        e1.Equals(e2).Should().BeTrue();
+        e1.Should().Be(Enums.TestArrayFlags.None);
+    }
 }
