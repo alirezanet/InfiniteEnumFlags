@@ -86,7 +86,34 @@ for example we can use all bitwise operators (`|`,`&`,`~`,`^`) in our custom enu
 
 e.g
 ```csharp
-var features = YourCustomEnumName.F1 | YourCustomEnumName.F3;  // (+) F1 + F3 
+var features = YourCustomEnumName.F1 | YourCustomEnumName.F3;  // F1 + F3 
+```
+
+Alternatively, If you don't like bitwise Operators, you can use the EnumItem extension methods:
+
+| Name       | Description                                                      |
+|------------|------------------------------------------------------------------|
+| HasFlag    | Check whatever enum has an specific flag or not, (**bitwise &**) |
+| SetFlag    | Add/Set specific flag(s) to an enum, (**bitwise or**)            |
+| UnsetFlag  | Remove/Unset specific flag(s) from an enum (**bitwise &~**)      |
+| ToggleFlag | It toggles flag(s) from an enum (**bitwise ^**)                  |
+
+e.g
+```csharp
+features.HasFlag(YourCustomEnumName.F2); // false
+```
+
+### Storing EnumItem's value
+
+Since we want to support more than 32 items in our enums, we can not store an integer
+value, luckily we can use EnumItem `ToBase64Key()` function to get a unique base64 key. and to convert it back to an
+EnumItem we can use `EnumItem.FromBase64()` static method.
+
+```csharp
+var features = YourCustomEnumName.F1.SetFlag(YourCustomEnumName.F3); 
+var key = features.ToBase64Key();
+var new_features = EnumItem.FromBase64(key); 
+Console.WriteLine(features == new_features); // true
 ```
 
 ## Support
