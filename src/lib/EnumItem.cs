@@ -85,6 +85,21 @@ public sealed class EnumItem
         return sb.ToString();
     }
 
+    public string ToBase64Key()
+    {
+        var bytes = ToBytes().AsSpan();
+        var index = 0;
+        for (var i = bytes.Length - 1; i >= 0; i--)
+        {
+            if (bytes[i] == 0) continue;
+            index = i + 1;
+            break;
+        }
+
+        var key = bytes.Slice(0, index).ToArray();
+        return Convert.ToBase64String(key);
+    }
+
     public override bool Equals(object obj)
     {
         if (obj is not EnumItem item) return false;
@@ -117,7 +132,7 @@ public sealed class EnumItem
         return Convert.ToBase64String(bytes);
     }
 
-    public static EnumItem FromBase64String(string base64)
+    public static EnumItem FromBase64(string base64)
     {
         var bytes = Convert.FromBase64String(base64);
         return new EnumItem(bytes);
