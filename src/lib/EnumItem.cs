@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Text;
-using InfiniteEnumFlags.Internal;
 
 namespace InfiniteEnumFlags;
 
@@ -112,12 +111,16 @@ public sealed class EnumItem
         return Bits.GetHashCode() * 31;
     }
 
-    public string ToHexString()
+    public string ToBase64String()
     {
         var bytes = ToBytes();
-        // if (BitConverter.IsLittleEndian) // Not sure is necessary
-        Array.Reverse(bytes);
-        return HexConverter.ToHexString(bytes);
+        return Convert.ToBase64String(bytes);
+    }
+
+    public static EnumItem FromBase64String(string base64)
+    {
+        var bytes = Convert.FromBase64String(base64);
+        return new EnumItem(bytes);
     }
 
     public byte[] ToBytes()
@@ -136,23 +139,5 @@ public sealed class EnumItem
     public BitArray ToBitArray()
     {
         return (Bits.Clone() as BitArray)!;
-    }
-
-    public static EnumItem FromHexString(HexString hex)
-    {
-        var arr = new byte[hex.Value.Length >> 1];
-
-        for (var i = 0; i < hex.Value.Length >> 1; ++i)
-        {
-            arr[i] = (byte)((GetHexVal(hex.Value[i << 1]) << 4) + (GetHexVal(hex.Value[(i << 1) + 1])));
-        }
-
-        return new EnumItem(arr);
-    }
-
-    private static int GetHexVal(char hex)
-    {
-        var val = (int)hex;
-        return val - (val < 58 ? 48 : (val < 97 ? 55 : 87));
     }
 }
