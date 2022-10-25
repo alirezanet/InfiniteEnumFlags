@@ -2,8 +2,23 @@
 
 public static class Extensions
 {
-    public static bool HasFlag(this EnumItem source, EnumItem flag)
+    public static EnumItem SetFlag(this EnumItem a, EnumItem b)
     {
-        return (source & flag) != new EnumItem(0, source.Bits.Length);
+        return a | b;
+    }
+
+    public static EnumItem UnsetFlag(this EnumItem a, EnumItem b)
+    {
+        return a & (~b);
+    }
+
+    public static bool HasFlag(this EnumItem a, EnumItem b)
+    {
+        return (a & b) == b;
+    }
+
+    public static EnumItem ToggleFlag(this EnumItem a, EnumItem b)
+    {
+        return a ^ b;
     }
 }
