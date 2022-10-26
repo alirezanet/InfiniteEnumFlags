@@ -61,7 +61,7 @@ You can use the `IIndexDictionaryFlags` instead of `IArrayFlags` if you wanna ta
 
 `IIndexDictionaryFlags`e.g
 ```csharp
-public partial class TestIndexDictionaryFlags : IIndexDictionaryFlags
+public partial class YourCustomEnumName : IIndexDictionaryFlags
 {
     public Dictionary<string, int> Items() => new()
     {
