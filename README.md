@@ -121,7 +121,7 @@ Console.WriteLine(features == new_features); // true
 ## Support
 
 - Don't forget to give a ⭐ on [GitHub](https://github.com/alirezanet/InfiniteEnumFlags)
-- Share your feedback and ideas to improve this tool
+- Share your feedback and ideas to improve this library
 - Share InfiniteEnumFlags on your favorite social media and your friends
 - Write a blog post about InfiniteEnumFlags
 
