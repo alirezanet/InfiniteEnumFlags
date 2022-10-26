@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace InfiniteEnumFlags;
+namespace InfiniteEnumFlags.Generator;
 
 /// <summary>
 /// Created on demand before each generation pass
