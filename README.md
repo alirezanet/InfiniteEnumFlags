@@ -1,8 +1,10 @@
 # InfiniteEnumFlags
-
 <!--  ![Nuget](https://img.shields.io/nuget/v/InfiniteEnumFlags?label=stable) -->
 ![GitHub](https://img.shields.io/github/license/alirezanet/InfiniteEnumFlags) ![Nuget](https://img.shields.io/nuget/dt/InfiniteEnumFlags?color=%239100ff) ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/InfiniteEnumFlags?label=latest) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/alirezanet/InfiniteEnumFlags/Publish%20Packages?label=checks)
 [![NuGet version (InfiniteEnumFlags)](https://img.shields.io/nuget/v/InfiniteEnumFlags.svg?style=flat-square)](https://www.nuget.org/packages/InfiniteEnumFlags/)
+
+*Status: (Project is in active development)*
+
 
 The dotnet enum flags feature is amazing, but it is too limited 🙁. InfiniteEnumFlags is the same without limitation. 😊
 
