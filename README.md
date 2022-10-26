@@ -23,7 +23,7 @@ To define your enum, you must create a `partial` class and extend it using `IArr
 
 `IArrayFlags`e.g.
 ``` csharp
-public partial class YourCustomEnumName : IArrayFlags
+public partial class FeaturesEnum : IArrayFlags
 {
     public string[] Items() => new[]
     {
@@ -43,7 +43,7 @@ In this example, F1-F4 are the enum items that give you binary sequence values u
 after creating this class the below code will be generated in the background that you can use to work with your Enums.
 
 ```csharp
-public partial class YourCustomEnumName
+public partial class FeaturesEnum
 {
     public const int TOTAL_ITEMS = 4;
     public static readonly EnumItem None = new(0, TOTAL_ITEMS);
@@ -61,7 +61,7 @@ You can use the `IIndexDictionaryFlags` instead of `IArrayFlags` if you wanna ta
 
 `IIndexDictionaryFlags`e.g
 ```csharp
-public partial class YourCustomEnumName : IIndexDictionaryFlags
+public partial class FeaturesEnum : IIndexDictionaryFlags
 {
     public Dictionary<string, int> Items() => new()
     {
@@ -86,7 +86,7 @@ for example we can use all bitwise operators (`|`,`&`,`~`,`^`) in our custom enu
 
 e.g
 ```csharp
-var features = YourCustomEnumName.F1 | YourCustomEnumName.F3;  // F1 + F3 
+var features = FeaturesEnum.F1 | FeaturesEnum.F3;  // F1 + F3 
 ```
 
 Alternatively, If you don't like bitwise Operators, you can use the EnumItem extension methods:
@@ -100,7 +100,7 @@ Alternatively, If you don't like bitwise Operators, you can use the EnumItem ext
 
 e.g
 ```csharp
-features.HasFlag(YourCustomEnumName.F2); // false
+features.HasFlag(FeaturesEnum.F2); // false
 ```
 
 ### Storing EnumItem's value
@@ -110,7 +110,7 @@ value, luckily we can use EnumItem `ToBase64Key()` function to get a unique base
 EnumItem we can use `EnumItem.FromBase64()` static method.
 
 ```csharp
-var features = YourCustomEnumName.F1.SetFlag(YourCustomEnumName.F3); 
+var features = FeaturesEnum.F1.SetFlag(FeaturesEnum.F3); 
 var key = features.ToBase64Key();
 var new_features = EnumItem.FromBase64(key); 
 Console.WriteLine(features == new_features); // true
