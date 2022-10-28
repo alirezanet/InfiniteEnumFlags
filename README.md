@@ -113,7 +113,7 @@ EnumItem we can use `EnumItem.FromBase64()` static method.
 
 ```csharp
 var features = FeaturesEnum.F1.SetFlag(FeaturesEnum.F3); 
-var key = features.ToBase64Key();
+string key = features.ToBase64Key();
 var new_features = EnumItem.FromBase64(key); 
 Console.WriteLine(features == new_features); // true
 ```
