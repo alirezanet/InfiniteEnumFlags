@@ -36,7 +36,7 @@ internal class ClassSyntaxReceiver : ISyntaxReceiver
         var source = new StringBuilder();
         source.AppendLine("// auto-generated file");
         source.AppendLine($"using InfiniteEnumFlags;");
-        var @namespace = GetNamespaceFrom(target);
+        var @namespace = target.GetNamespace();
         if (@namespace is not null)
             source.AppendLine($"namespace {@namespace};");
         var cleanTarget = target.RemoveNodes(target.ChildNodes(), SyntaxRemoveOptions.KeepNoTrivia);
@@ -171,13 +171,5 @@ internal class ClassSyntaxReceiver : ISyntaxReceiver
         return items is null ? new List<string>() : items.Select(q => q.Value?.ToString()).ToList();
     }
 
-    public static string GetNamespaceFrom(SyntaxNode s) =>
-        s.Parent switch
-        {
-            NamespaceDeclarationSyntax namespaceDeclarationSyntax => namespaceDeclarationSyntax.Name.ToString(),
-            FileScopedNamespaceDeclarationSyntax fileScopedNamespaceDeclarationSyntax =>
-                fileScopedNamespaceDeclarationSyntax.Name.ToString(),
-            null => null,
-            _ => GetNamespaceFrom(s.Parent)
-        };
+
 }
