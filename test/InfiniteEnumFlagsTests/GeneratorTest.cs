@@ -6,7 +6,7 @@ namespace InfiniteEnumFlagsTests;
 public class GeneratorTests
 {
     [Fact]
-    public void TestClass_MustHave_TotalItems_WithValueThree()
+    public void TestArrayFlags_MustHave_TotalItems_WithValue179()
     {
         // Arrange
         var x = new Enums.TestArrayFlags();
