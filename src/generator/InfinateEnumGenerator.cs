@@ -19,7 +19,7 @@ public class InfiniteEnumGenerator : ISourceGenerator
 
         foreach (var classes in receiver!.ClassSyntax.Sources)
         {
-            context.AddSource(classes.FileName, classes.Code);
+            context.AddSource($"{classes.FileName}.g.cs", classes.Code);
         }
     }
 }
