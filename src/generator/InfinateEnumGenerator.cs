@@ -21,5 +21,10 @@ public class InfiniteEnumGenerator : ISourceGenerator
         {
             context.AddSource($"{classes.FileName}.g.cs", classes.Code);
         }
+
+        foreach (var enums in receiver!.EnumSyntax.Sources)
+        {
+            context.AddSource($"{enums.FileName}.g.cs", enums.Code);
+        }
     }
 }

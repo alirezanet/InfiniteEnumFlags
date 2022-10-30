@@ -16,4 +16,15 @@ public class GeneratorTests
         field.Should().NotBeNull();
         field!.GetValue(x).Should().Be(179);
     }
+
+    [Fact]
+    public void PrivateEnums_MustHave_TotalItems_WithValue3()
+    {
+        // Arrange
+        var x = new Enums.Features();
+
+        // Act
+
+        // Assert
+    }
 }
