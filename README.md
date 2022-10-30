@@ -47,13 +47,13 @@ after creating this class the below code will be generated in the background tha
 ```csharp
 public partial class FeaturesEnum
 {
-    public const int TOTAL_ITEMS = 4;
-    public static readonly EnumItem None = new(0, TOTAL_ITEMS);
-    public static readonly EnumItem All = ~None;
-    public static readonly EnumItem F1 = new(1, TOTAL_ITEMS);
-    public static readonly EnumItem F2 = new(2, TOTAL_ITEMS);
-    public static readonly EnumItem F3 = new(3, TOTAL_ITEMS);
-    public static readonly EnumItem F4 = new(4, TOTAL_ITEMS);
+    public const int TOTAL_ITEMS = 4;                            //  Value - Bits
+    public static readonly EnumItem None = new(0, TOTAL_ITEMS);  //   0    - 0000
+    public static readonly EnumItem F1 = new(1, TOTAL_ITEMS);    //   1    - 0001
+    public static readonly EnumItem F2 = new(2, TOTAL_ITEMS);    //   2    - 0010
+    public static readonly EnumItem F3 = new(3, TOTAL_ITEMS);    //   4    - 0100
+    public static readonly EnumItem F4 = new(4, TOTAL_ITEMS);    //   8    - 1000
+    public static readonly EnumItem All = ~None;                 //   15   - 1111
 }
 ```
 
