@@ -18,7 +18,7 @@ this library aims to remove these restrictions and still give us the same functi
 ## Getting started
 
 To define an enum class, you can create a class/record and inherit it from `InfiniteEnum<ClassName>`,
-this base class, later on, will help you to access the list of defined enum items.
+this base class, will help you to access the list of defined enum items.
 then by adding static fields of type `Flag<ClassName>` you can create your enums.
 setting the values is imperative to provide values as powers of two. 
 
