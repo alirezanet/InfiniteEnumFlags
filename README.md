@@ -79,6 +79,13 @@ var new_features = Features.FromBase64(key);
 Console.WriteLine(features == new_features); // true
 ```
 
+## Example
+To see flexible aspnetcore authorization example using InfiniteEnumFlags, first clone the repo using below command
+```
+ git clone --recurse-submodules https://github.com/alirezanet/InfiniteEnumFlags.git
+```
+then you can run the `\InfiniteEnumFlags\Example\flexible-aspnetcore-authorization\FlexibleAuth\Server\` project.
+
 ## Support
 
 - Don't forget to give a ⭐ on [GitHub](https://github.com/alirezanet/InfiniteEnumFlags)
