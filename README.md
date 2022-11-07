@@ -84,7 +84,7 @@ To see flexible aspnetcore authorization example using InfiniteEnumFlags, first 
 ```
  git clone --recurse-submodules https://github.com/alirezanet/InfiniteEnumFlags.git
 ```
-then you can run the `\InfiniteEnumFlags\Example\flexible-aspnetcore-authorization\FlexibleAuth\Server\` project.
+then you can open `\InfiniteEnumFlags\Example\flexible-aspnetcore-authorization\FlexibleAuth\FlexibleAuth.sln` and then run the `Server` project.
 
 ## Support
 
