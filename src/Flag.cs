@@ -1,53 +1,7 @@
 using System.Collections;
-using System.Reflection;
 using System.Text;
 
 namespace InfiniteEnumFlags;
-
-public class Flag : Flag<object>
-{
-    public Flag(int index, int? length = null) : base(index, length)
-    {
-    }
-
-    public Flag(BitArray new_value) : base(new_value)
-    {
-    }
-
-    public Flag(byte[] new_value) : base(new_value)
-    {
-    }
-
-    public Flag() : base()
-    {
-    }
-}
-
-public abstract class InfiniteEnum<T>
-{
-    public static Flag<T>? FromName(string name)
-    {
-        return typeof(T)
-            .GetField(name, BindingFlags.Public | BindingFlags.Static)?
-            .GetValue(null) as Flag<T>;
-    }
-
-    public static Flag<T> All
-    {
-        get
-        {
-            var count = typeof(T)
-                .GetFields(BindingFlags.Public | BindingFlags.Static)
-                .Count(f => f.FieldType == typeof(Flag<T>));
-            return new Flag<T>(new BitArray(count, true));
-        }
-    }
-
-    public static Flag<T> FromBase64Key(string key)
-    {
-        return Flag<T>.FromBase64(key);
-    }
-}
 
 public class Flag<T>
 {
