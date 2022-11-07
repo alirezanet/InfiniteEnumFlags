@@ -27,15 +27,15 @@ e.g
 ```csharp
 public class Features : InfiniteEnum<Features>
 {
-    public static readonly Flag<Features> None = new(-1);                  // 0  - 0
-    public static readonly Flag<Features> ViewRoles = new(0);              // 1  - 1
-    public static readonly Flag<Features> ManageRoles = new(1);            // 2  - 10
-    public static readonly Flag<Features> ViewUsers = new(2);              // 4  - 100
-    public static readonly Flag<Features> ManageUsers = new(3);            // 8  - 1000
-    public static readonly Flag<Features> ConfigureAccessControl = new(4); // 16 - 10000
-    public static readonly Flag<Features> Counter = new(5);                // 32 - 100000
-    public static readonly Flag<Features> Forecast = new(6);               // 64 - 1000000
-    public static readonly Flag<Features> ViewAccessControl = new(7);      // 128 - 10000000
+    public static readonly Flag<Features> None = new(-1);  // 0  - 0
+    public static readonly Flag<Features> F1 = new(0);     // 1  - 1
+    public static readonly Flag<Features> F2 = new(1);     // 2  - 10
+    public static readonly Flag<Features> F3 = new(2);     // 4  - 100
+    public static readonly Flag<Features> F4 = new(3);     // 8  - 1000
+    public static readonly Flag<Features> F5 = new(4);     // 16 - 10000
+    public static readonly Flag<Features> F6 = new(5);     // 32 - 100000
+    public static readonly Flag<Features> F7 = new(6);     // 64 - 1000000
+    public static readonly Flag<Features> F8 = new(7);     // 128 - 10000000
 
     // We can support up to 2,147,483,647 items
 }
