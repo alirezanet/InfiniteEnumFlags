@@ -3,23 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example", "Example", "{020B5819-DAD5-41DF-A4A5-1D4930BDF353}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfiniteEnumFlags", "src\InfiniteEnumFlags.csproj", "{AF3DA3E4-B012-4780-AB4C-686C3C04991F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "flexible-aspnetcore-authorization", "flexible-aspnetcore-authorization", "{E78226AE-4880-4342-859D-6C215E4AE306}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{7AE38E62-87EA-4005-9AF2-5368176088BF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FlexibleAuth", "FlexibleAuth", "{276A2E7B-823A-4717-9131-8EB4207CB0B5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexibleAuth.Client", "Example\flexible-aspnetcore-authorization\FlexibleAuth\Client\FlexibleAuth.Client.csproj", "{8E046309-4F3D-4EED-ACFE-DC0CA92B7B0C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexibleAuth.Server", "Example\flexible-aspnetcore-authorization\FlexibleAuth\Server\FlexibleAuth.Server.csproj", "{CDC5FA9A-4DB7-4D38-96D8-7E118842383B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexibleAuth.Shared", "Example\flexible-aspnetcore-authorization\FlexibleAuth\Shared\FlexibleAuth.Shared.csproj", "{75B28F47-FA74-4725-B903-08727D5F7BB6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfiniteEnumFlags", "src\InfiniteEnumFlags.csproj", "{C9F5AB8B-6095-4413-BEAF-1E44DF1547CF}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{2E5B59CE-A3EE-49E5-AD59-1849E238B769}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfiniteEnumFlagsTests", "test\InfiniteEnumFlagsTests\InfiniteEnumFlagsTests.csproj", "{478B60E0-B68A-46AE-AC46-A2231FDF7536}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfiniteEnumFlagsTests", "test\InfiniteEnumFlagsTests\InfiniteEnumFlagsTests.csproj", "{696779D2-77F6-4DC1-B68B-C42C47E1ED70}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,33 +18,16 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8E046309-4F3D-4EED-ACFE-DC0CA92B7B0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8E046309-4F3D-4EED-ACFE-DC0CA92B7B0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8E046309-4F3D-4EED-ACFE-DC0CA92B7B0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8E046309-4F3D-4EED-ACFE-DC0CA92B7B0C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CDC5FA9A-4DB7-4D38-96D8-7E118842383B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CDC5FA9A-4DB7-4D38-96D8-7E118842383B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CDC5FA9A-4DB7-4D38-96D8-7E118842383B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CDC5FA9A-4DB7-4D38-96D8-7E118842383B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{75B28F47-FA74-4725-B903-08727D5F7BB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{75B28F47-FA74-4725-B903-08727D5F7BB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{75B28F47-FA74-4725-B903-08727D5F7BB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{75B28F47-FA74-4725-B903-08727D5F7BB6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C9F5AB8B-6095-4413-BEAF-1E44DF1547CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C9F5AB8B-6095-4413-BEAF-1E44DF1547CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C9F5AB8B-6095-4413-BEAF-1E44DF1547CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C9F5AB8B-6095-4413-BEAF-1E44DF1547CF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{478B60E0-B68A-46AE-AC46-A2231FDF7536}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{478B60E0-B68A-46AE-AC46-A2231FDF7536}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{478B60E0-B68A-46AE-AC46-A2231FDF7536}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{478B60E0-B68A-46AE-AC46-A2231FDF7536}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF3DA3E4-B012-4780-AB4C-686C3C04991F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF3DA3E4-B012-4780-AB4C-686C3C04991F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF3DA3E4-B012-4780-AB4C-686C3C04991F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF3DA3E4-B012-4780-AB4C-686C3C04991F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{696779D2-77F6-4DC1-B68B-C42C47E1ED70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{696779D2-77F6-4DC1-B68B-C42C47E1ED70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{696779D2-77F6-4DC1-B68B-C42C47E1ED70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{696779D2-77F6-4DC1-B68B-C42C47E1ED70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{E78226AE-4880-4342-859D-6C215E4AE306} = {020B5819-DAD5-41DF-A4A5-1D4930BDF353}
-		{276A2E7B-823A-4717-9131-8EB4207CB0B5} = {E78226AE-4880-4342-859D-6C215E4AE306}
-		{8E046309-4F3D-4EED-ACFE-DC0CA92B7B0C} = {276A2E7B-823A-4717-9131-8EB4207CB0B5}
-		{CDC5FA9A-4DB7-4D38-96D8-7E118842383B} = {276A2E7B-823A-4717-9131-8EB4207CB0B5}
-		{75B28F47-FA74-4725-B903-08727D5F7BB6} = {276A2E7B-823A-4717-9131-8EB4207CB0B5}
-		{478B60E0-B68A-46AE-AC46-A2231FDF7536} = {2E5B59CE-A3EE-49E5-AD59-1849E238B769}
+		{696779D2-77F6-4DC1-B68B-C42C47E1ED70} = {7AE38E62-87EA-4005-9AF2-5368176088BF}
 	EndGlobalSection
 EndGlobal
