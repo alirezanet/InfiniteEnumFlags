@@ -1,3 +1,4 @@
+using System.CodeDom.Compiler;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -39,99 +40,31 @@ internal class ClassSyntaxReceiver : ISyntaxReceiver
         var @namespace = target.GetNamespace();
         if (@namespace is not null)
             source.AppendLine($"namespace {@namespace};");
-        var cleanTarget = target.RemoveNodes(target.ChildNodes(), SyntaxRemoveOptions.KeepNoTrivia);
-        cleanTarget = GenerateClassMembers(target, cleanTarget);
-        source.AppendLine(cleanTarget.ToString());
+        var body = GenerateClass(target);
+        source.AppendLine(body);
         return source.ToString();
     }
 
-    private ClassDeclarationSyntax GenerateClassMembers(ClassDeclarationSyntax target,
-        ClassDeclarationSyntax cleanTarget)
+    private string GenerateClass(ClassDeclarationSyntax target)
     {
         var itemsMethod = target.Members.OfType<MethodDeclarationSyntax>()
             .Single(q => q.Identifier.Text == "Items");
         var items = ParseEnumItems(itemsMethod) ?? new List<string>();
-        var enumItems = new List<MemberDeclarationSyntax>
-        {
-            FieldDeclaration(VariableDeclaration(PredefinedType(Token(SyntaxKind.IntKeyword)))
-                    .WithVariables(
-                        SingletonSeparatedList(VariableDeclarator(Identifier("TOTAL_ITEMS"))
-                            .WithInitializer(EqualsValueClause(LiteralExpression(
-                                SyntaxKind.NumericLiteralExpression,
-                                Literal(items.Count)))))))
-                .WithModifiers(TokenList(
-                    Token(SyntaxKind.PublicKeyword),
-                    Token(SyntaxKind.ConstKeyword))),
-            FieldDeclaration(
-                    VariableDeclaration(
-                            IdentifierName("EnumItem"))
-                        .WithVariables(
-                            SingletonSeparatedList(
-                                VariableDeclarator(
-                                        Identifier("None"))
-                                    .WithInitializer(
-                                        EqualsValueClause(
-                                            ImplicitObjectCreationExpression()
-                                                .WithArgumentList(
-                                                    ArgumentList(
-                                                        SeparatedList<ArgumentSyntax>(
-                                                            new SyntaxNodeOrToken[]
-                                                            {
-                                                                Argument(
-                                                                    LiteralExpression(
-                                                                        SyntaxKind.NumericLiteralExpression,
-                                                                        Literal(0))),
-                                                                Token(SyntaxKind.CommaToken),
-                                                                Argument(
-                                                                    IdentifierName("TOTAL_ITEMS"))
-                                                            }))))))))
-                .WithModifiers(
-                    TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.StaticKeyword),
-                        Token(SyntaxKind.ReadOnlyKeyword))),
-            FieldDeclaration(
-                    VariableDeclaration(
-                            IdentifierName("EnumItem"))
-                        .WithVariables(
-                            SingletonSeparatedList(
-                                VariableDeclarator(
-                                        Identifier("All"))
-                                    .WithInitializer(
-                                        EqualsValueClause(
-                                            PrefixUnaryExpression(
-                                                SyntaxKind.BitwiseNotExpression,
-                                                IdentifierName("None")))))))
-                .WithModifiers(
-                    TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.StaticKeyword),
-                        Token(SyntaxKind.ReadOnlyKeyword)))
-        };
 
-        // ReSharper disable once LoopCanBeConvertedToQuery
+        using var output = new StringWriter();
+        using var writer = new IndentedTextWriter(output);
+        writer.WriteLine($"public partial class {target.Identifier}");
+        writer.WriteLine("{");
+        writer.Indent++;
+        writer.WriteLine($"public static readonly Flag None = new(-1);");
         for (var i = 0; i < items.Count; i++)
         {
-            enumItems.Add(
-                FieldDeclaration(VariableDeclaration(IdentifierName("EnumItem"))
-                        .WithVariables(SingletonSeparatedList(
-                            VariableDeclarator(Identifier(items[i]))
-                                .WithInitializer(EqualsValueClause(
-                                    ImplicitObjectCreationExpression()
-                                        .WithArgumentList(ArgumentList(SeparatedList<ArgumentSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
-                                                Argument(
-                                                    LiteralExpression(
-                                                        SyntaxKind.NumericLiteralExpression,
-                                                        Literal(i + 1))),
-                                                Token(SyntaxKind.CommaToken),
-                                                Argument(
-                                                    IdentifierName("TOTAL_ITEMS"))
-                                            }))))))))
-                    .WithModifiers(TokenList(
-                        Token(SyntaxKind.PublicKeyword),
-                        Token(SyntaxKind.StaticKeyword),
-                        Token(SyntaxKind.ReadOnlyKeyword))));
+            writer.WriteLine($"public static readonly Flag {items[i]} = new({i});");
         }
+        writer.Indent--;
+        writer.WriteLine("}");
 
-        return cleanTarget!.WithMembers(List(enumItems)).NormalizeWhitespace();
+        return output.ToString();
     }
 
     public List<string> ParseEnumItems(MethodDeclarationSyntax method)

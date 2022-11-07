@@ -15,11 +15,11 @@ public class EnumItemTest
     [InlineData(4)]
     [InlineData(16)]
     [InlineData(25)]
-    [InlineData(31)]
+    [InlineData(30)]
     public void ToBitArray_Under32Items_ShouldReturnSameInt(int index)
     {
         // Arrange
-        var x = new EnumItem(index + 1, index + 1);
+        var x = new Flag(index);
         var expected = (int)Math.Pow(2, index);
 
         // Act
@@ -41,11 +41,11 @@ public class EnumItemTest
     [InlineData(15)]
     [InlineData(16)]
     [InlineData(25)]
-    [InlineData(31)]
+    [InlineData(30)]
     public void ToBytes_Under32Items_ShouldReturnSameBytes(int index)
     {
         // Arrange
-        var x = new EnumItem(index + 1, index + 1);
+        var x = new Flag(index);
         var integerValue = (int)Math.Pow(2, index);
         var expected = BitConverter.GetBytes(integerValue);
 
@@ -78,7 +78,7 @@ public class EnumItemTest
     public void ToHexString_Under32Items_ShouldReturnSameHex(int index)
     {
         // Arrange
-        var x = new EnumItem(index + 1, index + 2);
+        var x = new Flag(index);
         var integerValue = BigInteger.Pow(2, index);
         var expected = Convert.ToBase64String(integerValue.ToByteArray());
 
@@ -89,7 +89,7 @@ public class EnumItemTest
         actual.Should().Be(expected, x.ToString());
         actual.Length.Should().BeGreaterThan(0);
 
-        x.Should().Be(EnumItem.FromBase64(actual));
+        x.Should().Be(Flag.FromBase64(actual));
     }
 
     [Theory]
@@ -103,8 +103,8 @@ public class EnumItemTest
     {
         // Arrange
         var valueIndex = Math.Min(firstLength, secondLength) - 2;
-        var e1 = new EnumItem(valueIndex, firstLength);
-        var e2 = new EnumItem(valueIndex, secondLength);
+        var e1 = new Flag(valueIndex, firstLength);
+        var e2 = new Flag(valueIndex, secondLength);
 
         // Assert
         (e1 == e2).Should().BeTrue();
@@ -115,8 +115,8 @@ public class EnumItemTest
     public void TwoNoneShouldBeEqual()
     {
         // Arrange
-        var e1 = new EnumItem(0, 3);
-        var e2 = new EnumItem(0, 3);
+        var e1 = new Flag(-1, 3);
+        var e2 = new Flag(-1, 5);
 
         // Assert
         (e1 == e2).Should().BeTrue();
@@ -132,7 +132,7 @@ public class EnumItemTest
         var hex = flags.ToBase64String();
 
         // Act
-        var newFlags = EnumItem.FromBase64(hex);
+        var newFlags = Flag.FromBase64(hex);
 
         // Assert
         flags.Should().Be(newFlags);
@@ -142,15 +142,15 @@ public class EnumItemTest
     public void FromBase64String_WithDifferentLength_MustHaveEqualItems()
     {
         // Arrange
-        var e1 = new EnumItem(5, 10);
+        var e1 = new Flag(5, 10);
         var base1 = e1.ToBase64String();
 
-        var e2 = new EnumItem(5, 50);
+        var e2 = new Flag(5, 50);
         var base2 = e2.ToBase64String();
 
         // Act
-        var newEnum1 = EnumItem.FromBase64(base1);
-        var newEnum2 = EnumItem.FromBase64(base2);
+        var newEnum1 = Flag.FromBase64(base1);
+        var newEnum2 = Flag.FromBase64(base2);
 
         // Assert
         newEnum1.Should().Be(e1);
@@ -174,15 +174,15 @@ public class EnumItemTest
     public void ToBase64Key_WithDifferentLength_MustHaveEqualKeyAndItems(int firstLength, int secondLength, int index)
     {
         // Arrange
-        var e1 = new EnumItem(index, firstLength);
+        var e1 = new Flag(index, firstLength);
         var key1 = e1.ToBase64Key();
 
-        var e2 = new EnumItem(index, secondLength);
+        var e2 = new Flag(index, secondLength);
         var key2 = e2.ToBase64Key();
 
         // Act
-        var newEnum1 = EnumItem.FromBase64(key1);
-        var newEnum2 = EnumItem.FromBase64(key2);
+        var newEnum1 = Flag.FromBase64(key1);
+        var newEnum2 = Flag.FromBase64(key2);
 
         // Assert
         key1.Should().Be(key2);

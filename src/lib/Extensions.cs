@@ -2,23 +2,24 @@
 
 public static class Extensions
 {
-    public static bool HasFlag(this EnumItem a, EnumItem b)
+    public static bool HasFlag<T>(this Flag<T> a, Flag<T> b)
     {
         return (a & b) == b;
     }
 
-    public static EnumItem SetFlag(this EnumItem a, params EnumItem[] b)
+    public static Flag<T> SetFlag<T>(this Flag<T> a, params Flag<T>[] b)
     {
         return b.Aggregate(a, (current, item) => current | item);
     }
 
-    public static EnumItem UnsetFlag(this EnumItem a, params EnumItem[] b)
+    public static Flag<T> UnsetFlag<T>(this Flag<T> a, params Flag<T>[] b)
     {
         return b.Aggregate(a, (current, item) => current & ~item);
     }
 
-    public static EnumItem ToggleFlag(this EnumItem a, params EnumItem[] b)
+    public static Flag<T> ToggleFlag<T>(this Flag<T> a, params Flag<T>[] b)
     {
         return b.Aggregate(a, (current, item) => current ^ item);
     }
+
 }

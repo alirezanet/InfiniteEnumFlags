@@ -15,7 +15,10 @@ public class ExtensionsTest
         // Assert
         flags.HasFlag(Enums.TestArrayFlags.F2).Should().BeTrue();
         flags.HasFlag(Enums.TestArrayFlags.F1).Should().BeTrue();
-        Enums.TestArrayFlags.All.HasFlag(Enums.TestArrayFlags.F3).Should().BeTrue();
+        (Enums.TestArrayFlags.F1 | Enums.TestArrayFlags.F3 | Enums.TestArrayFlags.F2)
+            .HasFlag(Enums.TestArrayFlags.F3)
+            .Should()
+            .BeTrue();
     }
 
     [Fact]
@@ -42,7 +45,6 @@ public class ExtensionsTest
         actual.Should().Be(Enums.TestArrayFlags.F2 | Enums.TestArrayFlags.F3);
         actual.Should().NotBe(Enums.TestArrayFlags.F1);
         actual.Should().NotBe(Enums.TestArrayFlags.None);
-        actual.Should().NotBe(Enums.TestArrayFlags.All);
     }
 
     [Fact]
@@ -71,6 +73,5 @@ public class ExtensionsTest
         actual.Should().Be(Enums.TestArrayFlags.F2);
         actual.Should().NotBe(Enums.TestArrayFlags.F1);
         actual.Should().NotBe(Enums.TestArrayFlags.None);
-        actual.Should().NotBe(Enums.TestArrayFlags.All);
     }
 }
