@@ -23,7 +23,7 @@ jobs:
          - name: Publish InfiniteEnumFlags
            uses: alirezanet/publish-nuget@v3.0.0
            with:
-              PROJECT_FILE_PATH: src/generator/generator.csproj
+              PROJECT_FILE_PATH: src/InfiniteEnumFlags.csproj
               INCLUDE_SYMBOLS: true
               NUGET_KEY: ${{secrets.NUGET_API_KEY}}
  
