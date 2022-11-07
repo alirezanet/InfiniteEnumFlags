@@ -42,6 +42,11 @@ public abstract class InfiniteEnum<T>
             return new Flag<T>(new BitArray(count, true));
         }
     }
+
+    public static Flag<T> FromBase64Key(string key)
+    {
+        return Flag<T>.FromBase64(key);
+    }
 }
 
 public class Flag<T>
