@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Version>0.2.0</Version>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <AssemblyName>InfiniteEnumFlags</AssemblyName>
+    <RootNamespace>InfiniteEnumFlags</RootNamespace>
+    <PackageId>InfiniteEnumFlags</PackageId>
+    <Authors>Alireza Sabouri</Authors>
+    <Company>TuxTeam</Company>
+    <PackageDescription>The dotnet enum flags feature is amazing, but it is too limited 🙁. InfiniteEnumFlags is the same without limitation. 😊</PackageDescription>
+    <RepositoryUrl>https://github.com/alirezanet/InfiniteEnumFlags</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <LangVersion>latest</LangVersion>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <TargetFrameworks>net6.0;net7.0;netstandard2.1</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.5.4" />
+  </ItemGroup>
+
+</Project>

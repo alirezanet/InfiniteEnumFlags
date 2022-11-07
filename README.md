@@ -16,70 +16,31 @@ values which means we only can have a maximum of 32 items in our enum or 2^64 fo
 this library aims to remove these restrictions and still give us the same functionality.
 
 ## Getting started
-After installing the InfiniteEnumFlags NuGet package, there are several ways to use this package. I start with the easiest one.
-### Define your enum flags
 
-#### 1. using source generator (Recommended)
+To define an enum class, you can create a class/record and inherit it from `InfiniteEnum<ClassName>`,
+this base class, later on, will help you to access the list of defined enum items.
+then by adding static fields of type `Flag<ClassName>` you can create your enums.
+setting the values is imperative to provide values as powers of two. 
 
-To define your enum, you must create a `partial` class and extend it using `IArrayFlags` or `IIndexDictionaryFlags` and Implement the `Items` function that returns a list of strings.
-
-`IArrayFlags`e.g.
-``` csharp
-public partial class FeaturesEnum : IArrayFlags
-{
-    public string[] Items() => new[]
-    {
-    //  Name -- Value - Index - Bits 
-        "F1",  // 1   -   0   - 0001
-        "F2",  // 2   -   1   - 0010
-        "F3",  // 4   -   2   - 0100
-        "F4",  // 8   -   3   - 1000
-    };
-}
-```
-
-In this example, F1-F4 are the enum items that give you binary sequence values using the source generator.
-
-**Note: remember, the item's order when using `IArrayFlags` is Important**
-
-after creating this class the below code will be generated in the background that you can use to work with your Enums.
+e.g
 
 ```csharp
-public partial class FeaturesEnum
+public class Features : InfiniteEnum<Features>
 {
-    public const int TOTAL_ITEMS = 4;                            //  Value - Bits
-    public static readonly EnumItem None = new(0, TOTAL_ITEMS);  //   0    - 0000
-    public static readonly EnumItem F1 = new(1, TOTAL_ITEMS);    //   1    - 0001
-    public static readonly EnumItem F2 = new(2, TOTAL_ITEMS);    //   2    - 0010
-    public static readonly EnumItem F3 = new(3, TOTAL_ITEMS);    //   4    - 0100
-    public static readonly EnumItem F4 = new(4, TOTAL_ITEMS);    //   8    - 1000
-    public static readonly EnumItem All = ~None;                 //   15   - 1111
+    public static readonly Flag<Features> None = new(-1);                  // 0  - 0
+    public static readonly Flag<Features> ViewRoles = new(0);              // 1  - 1
+    public static readonly Flag<Features> ManageRoles = new(1);            // 2  - 10
+    public static readonly Flag<Features> ViewUsers = new(2);              // 4  - 100
+    public static readonly Flag<Features> ManageUsers = new(3);            // 8  - 1000
+    public static readonly Flag<Features> ConfigureAccessControl = new(4); // 16 - 10000
+    public static readonly Flag<Features> Counter = new(5);                // 32 - 100000
+    public static readonly Flag<Features> Forecast = new(6);               // 64 - 1000000
+    public static readonly Flag<Features> ViewAccessControl = new(7);      // 128 - 10000000
+
+    // We can support up to 2,147,483,647 items
 }
 ```
-
----
-
-You can use the `IIndexDictionaryFlags` instead of `IArrayFlags` if you wanna take control of the item's order and values.
-
-`IIndexDictionaryFlags`e.g
-```csharp
-public partial class FeaturesEnum : IIndexDictionaryFlags
-{
-    public Dictionary<string, int> Items() => new()
-    {
-      // Name, Order     Index - Value - Bits
-        { "F1", 2 }, //    2   -   4   - 100
-        { "F2", 0 }, //    0   -   1   - 001
-        { "F3", 1 }  //    1   -   2   - 010
-    };
-}
-```
-
-#### 2. Manual
-In the previous example we saw the generated code using source generator. 
-The second way of creating Enums is to manually create this class which gives us the same
-functionality. but I believe it is harder to manage. 
-
+ 
 ## Usage
 
 To use your custom enum, it is important to be familiar with the built-in dotnet enum flags capabilities
@@ -88,7 +49,7 @@ for example we can use all bitwise operators (`|`,`&`,`~`,`^`) in our custom enu
 
 e.g
 ```csharp
-var features = FeaturesEnum.F1 | FeaturesEnum.F3;  // F1 + F3 
+var features = Features.F1 | Features.F3;  // F1 + F3 
 ```
 
 Alternatively, If you don't like bitwise Operators, you can use the EnumItem extension methods:
@@ -102,7 +63,7 @@ Alternatively, If you don't like bitwise Operators, you can use the EnumItem ext
 
 e.g
 ```csharp
-features.HasFlag(FeaturesEnum.F2); // false
+features.HasFlag(Features.F2); // false
 ```
 
 ### Storing EnumItem's value
@@ -112,7 +73,7 @@ value, luckily we can use EnumItem `ToBase64Key()` function to get a unique base
 EnumItem we can use `EnumItem.FromBase64()` static method.
 
 ```csharp
-var features = FeaturesEnum.F1.SetFlag(FeaturesEnum.F3); 
+var features = Features.F1.SetFlag(Features.F3); 
 string key = features.ToBase64Key();
 var new_features = EnumItem.FromBase64(key); 
 Console.WriteLine(features == new_features); // true

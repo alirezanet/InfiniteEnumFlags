@@ -19,11 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <!-- Rererence the source generator project -->
-        <ProjectReference Include="..\..\src\generator\generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />        <!-- Don't reference the generator dll -->
-
-        <!-- Rererence the lib project "treat as an analyzer"-->
-        <ProjectReference Include="..\..\src\lib\lib.csproj" ReferenceOutputAssembly="true" /> <!-- We DO reference the attributes dll -->
+      <ProjectReference Include="..\..\src\InfiniteEnumFlags.csproj" />
     </ItemGroup>
 
 </Project>

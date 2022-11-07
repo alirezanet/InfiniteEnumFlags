@@ -10,13 +10,13 @@ public class ExtensionsTest
     public void HasFlag_TrueCondition()
     {
         // Arrange
-        var flags = Enums.TestArrayFlags.F1 | Enums.TestArrayFlags.F2;
+        var flags = Enums.TestEnum.F1 | Enums.TestEnum.F2;
 
         // Assert
-        flags.HasFlag(Enums.TestArrayFlags.F2).Should().BeTrue();
-        flags.HasFlag(Enums.TestArrayFlags.F1).Should().BeTrue();
-        (Enums.TestArrayFlags.F1 | Enums.TestArrayFlags.F3 | Enums.TestArrayFlags.F2)
-            .HasFlag(Enums.TestArrayFlags.F3)
+        flags.HasFlag(Enums.TestEnum.F2).Should().BeTrue();
+        flags.HasFlag(Enums.TestEnum.F1).Should().BeTrue();
+        (Enums.TestEnum.F1 | Enums.TestEnum.F3 | Enums.TestEnum.F2)
+            .HasFlag(Enums.TestEnum.F3)
             .Should()
             .BeTrue();
     }
@@ -25,53 +25,53 @@ public class ExtensionsTest
     public void HasFlag_FalseCondition()
     {
         // Arrange
-        var flags = Enums.TestArrayFlags.F1 | Enums.TestArrayFlags.F2;
+        var flags = Enums.TestEnum.F1 | Enums.TestEnum.F2;
 
         // Assert
-        flags.HasFlag(Enums.TestArrayFlags.F3).Should().BeFalse();
-        Enums.TestArrayFlags.None.HasFlag(Enums.TestArrayFlags.F3).Should().BeFalse();
+        flags.HasFlag(Enums.TestEnum.F3).Should().BeFalse();
+        Enums.TestEnum.None.HasFlag(Enums.TestEnum.F3).Should().BeFalse();
     }
 
     [Fact]
     public void ToggleFlag()
     {
         // Arrange
-        var flags = Enums.TestArrayFlags.F1 | Enums.TestArrayFlags.F2;
+        var flags = Enums.TestEnum.F1 | Enums.TestEnum.F2;
 
         // Act
-        var actual = flags.ToggleFlag(Enums.TestArrayFlags.F1, Enums.TestArrayFlags.F3);
+        var actual = flags.ToggleFlag(Enums.TestEnum.F1, Enums.TestEnum.F3);
 
         // Assert
-        actual.Should().Be(Enums.TestArrayFlags.F2 | Enums.TestArrayFlags.F3);
-        actual.Should().NotBe(Enums.TestArrayFlags.F1);
-        actual.Should().NotBe(Enums.TestArrayFlags.None);
+        actual.Should().Be(Enums.TestEnum.F2 | Enums.TestEnum.F3);
+        actual.Should().NotBe(Enums.TestEnum.F1);
+        actual.Should().NotBe(Enums.TestEnum.None);
     }
 
     [Fact]
     public void SetFlag()
     {
         // Arrange
-        var flags = Enums.TestArrayFlags.F1;
+        var flags = Enums.TestEnum.F1;
 
         // Act
-        var actual = flags.SetFlag(Enums.TestArrayFlags.F3);
+        var actual = flags.SetFlag(Enums.TestEnum.F3);
 
         // Assert
-        actual.HasFlag(Enums.TestArrayFlags.F3);
+        actual.HasFlag(Enums.TestEnum.F3);
     }
 
     [Fact]
     public void UnSetFlag()
     {
         // Arrange
-        var flags = Enums.TestArrayFlags.F1 | Enums.TestArrayFlags.F2;
+        var flags = Enums.TestEnum.F1 | Enums.TestEnum.F2;
 
         // Act
-        var actual = flags.UnsetFlag(Enums.TestArrayFlags.F1, Enums.TestArrayFlags.F3);
+        var actual = flags.UnsetFlag(Enums.TestEnum.F1, Enums.TestEnum.F3);
 
         // Assert
-        actual.Should().Be(Enums.TestArrayFlags.F2);
-        actual.Should().NotBe(Enums.TestArrayFlags.F1);
-        actual.Should().NotBe(Enums.TestArrayFlags.None);
+        actual.Should().Be(Enums.TestEnum.F2);
+        actual.Should().NotBe(Enums.TestEnum.F1);
+        actual.Should().NotBe(Enums.TestEnum.None);
     }
 }

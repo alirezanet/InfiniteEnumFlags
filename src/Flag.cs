@@ -146,7 +146,9 @@ public class Flag<T>
         return new Flag<T>(x.Not());
     }
 
-    public override string ToString()
+    public override string ToString() => ToBase64Key();
+
+    public string ToBinaryString()
     {
         var sb = new StringBuilder();
 

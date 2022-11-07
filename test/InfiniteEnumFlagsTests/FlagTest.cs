@@ -1,11 +1,12 @@
 ﻿using System.Numerics;
 using FluentAssertions;
 using InfiniteEnumFlags;
+using InfiniteEnumFlagsTests.Enums;
 using Xunit;
 
 namespace InfiniteEnumFlagsTests;
 
-public class EnumItemTest
+public class FlagTest
 {
     [Theory]
     [InlineData(0)]
@@ -121,18 +122,17 @@ public class EnumItemTest
         // Assert
         (e1 == e2).Should().BeTrue();
         e1.Equals(e2).Should().BeTrue();
-        e1.Should().Be(Enums.TestArrayFlags.None);
     }
 
     [Fact]
     public void FromBase64String_SameLength_MustHaveEqualBase64String()
     {
         // Arrange
-        var flags = Enums.TestArrayFlags.F2 | Enums.TestArrayFlags.F129 | Enums.TestArrayFlags.F172;
+        var flags = TestEnum.F2 | TestEnum.F7 | TestEnum.F8;
         var hex = flags.ToBase64String();
 
         // Act
-        var newFlags = Flag.FromBase64(hex);
+        var newFlags = Flag<TestEnum>.FromBase64(hex);
 
         // Assert
         flags.Should().Be(newFlags);
