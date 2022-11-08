@@ -107,7 +107,7 @@ public class Flag<T>
         return new Flag<T>(x.Not());
     }
 
-    public override string ToString() => ToBase64();
+    public override string ToString() => ToBase64Trimmed();
 
     public string ToBinaryString()
     {
@@ -137,7 +137,7 @@ public class Flag<T>
         return Convert.ToBase64String(compressedStream.ToArray());
     }
 
-    public string ToBase64()
+    public string ToBase64Trimmed()
     {
         var bytes = ToBytes().AsSpan();
         var index = 0;
@@ -150,6 +150,12 @@ public class Flag<T>
 
         var key = bytes[..index].ToArray();
         return Convert.ToBase64String(key);
+    }
+
+    public string ToBase64String()
+    {
+        var bytes = ToBytes();
+        return Convert.ToBase64String(bytes);
     }
 
     public override bool Equals(object? obj)
