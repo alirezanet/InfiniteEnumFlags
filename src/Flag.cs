@@ -131,7 +131,7 @@ public class Flag<T> where T : InfiniteEnum<T>
             break;
         }
 
-        var key = bytes.Slice(0, index).ToArray();
+        var key = bytes[..index].ToArray();
         return Convert.ToBase64String(key);
     }
 
