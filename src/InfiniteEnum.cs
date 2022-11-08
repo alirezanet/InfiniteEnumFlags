@@ -18,8 +18,9 @@ public abstract class InfiniteEnum<T>
         {
             var count = typeof(T)
                 .GetFields(BindingFlags.Public | BindingFlags.Static)
-                .Count(f => f.FieldType == typeof(Flag<T>));
-            return new Flag<T>(new BitArray(count, true));
+                .Count(f => f.FieldType == typeof(Flag<T>) ||
+                            f.FieldType.BaseType == typeof(Flag<T>));
+            return new Flag<T>(new BitArray(count - 1, true));
         }
     }
 
