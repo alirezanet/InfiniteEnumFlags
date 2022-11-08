@@ -76,7 +76,7 @@ public class FlagTest
     [InlineData(1024)]
     [InlineData(81205)]
     // [InlineData(9120595)]
-    public void ToHexString_Under32Items_ShouldReturnSameHex(int index)
+    public void ToBase64_Under32Items_ShouldReturnSameHex(int index)
     {
         // Arrange
         var x = new Flag(index);
@@ -84,10 +84,10 @@ public class FlagTest
         var expected = Convert.ToBase64String(integerValue.ToByteArray());
 
         // Act
-        var actual = x.ToBase64();
+        var actual = x.ToBase64String();
 
         // Assert
-        actual.Should().Be(expected, x.ToString());
+        expected.Should().Be(actual);
         actual.Length.Should().BeGreaterThan(0);
 
         x.Should().Be(Flag.FromBase64(actual));
@@ -125,11 +125,11 @@ public class FlagTest
     }
 
     [Fact]
-    public void FromBase64String_SameLength_MustHaveEqualBase64String()
+    public void FromBase64_SameLength_MustHaveEqualBase64String()
     {
         // Arrange
         var flags = TestEnum.F2 | TestEnum.F7 | TestEnum.F8;
-        var hex = flags.ToBase64();
+        var hex = flags.ToBase64Trimmed();
 
         // Act
         var newFlags = Flag<TestEnum>.FromBase64(hex);
@@ -139,14 +139,14 @@ public class FlagTest
     }
 
     [Fact]
-    public void FromBase64String_WithDifferentLength_MustHaveEqualItems()
+    public void FromBase64_WithDifferentLength_MustHaveEqualItems()
     {
         // Arrange
         var e1 = new Flag(5, 10);
-        var base1 = e1.ToBase64();
+        var base1 = e1.ToBase64String();
 
         var e2 = new Flag(5, 50);
-        var base2 = e2.ToBase64();
+        var base2 = e2.ToBase64String();
 
         // Act
         var newEnum1 = Flag.FromBase64(base1);
@@ -176,10 +176,10 @@ public class FlagTest
     {
         // Arrange
         var e1 = new Flag(index, firstLength);
-        var key1 = e1.ToBase64();
+        var key1 = e1.ToBase64Trimmed();
 
         var e2 = new Flag(index, secondLength);
-        var key2 = e2.ToBase64();
+        var key2 = e2.ToBase64Trimmed();
 
         // Act
         var newEnum1 = Flag.FromBase64(key1);
@@ -187,7 +187,7 @@ public class FlagTest
 
         // Assert
         key1.Should().Be(key2);
-        newEnum1.ToBase64().Should().Be(key1);
+        newEnum1.ToBase64Trimmed().Should().Be(key1);
 
         newEnum1.Should().Be(e1);
         newEnum1.Should().Be(e2);
