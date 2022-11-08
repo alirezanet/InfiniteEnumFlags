@@ -52,7 +52,7 @@ e.g
 var features = Features.F1 | Features.F3;  // F1 + F3 
 ```
 
-Alternatively, If you don't like bitwise Operators, you can use the EnumItem extension methods:
+Alternatively, If you don't like bitwise Operators, you can use the Flag<> extension methods:
 
 | Name       | Description                                                      |
 |------------|------------------------------------------------------------------|
@@ -66,11 +66,11 @@ e.g
 features.HasFlag(Features.F2); // false
 ```
 
-### Storing EnumItem's value
+### Storing Flag's value
 
 Since we want to support more than 32 items in our enums, we can not store an integer
-value, luckily we can use EnumItem `ToBase64Key()` function to get a unique base64 key, and to convert it back to an
-EnumItem we can use `EnumItem.FromBase64()` static method.
+value, luckily we can use `ToBase64Key()` function to get a unique base64 key, and to convert it back to an
+Flag, we can use `FromBase64()` static method.
 
 ```csharp
 var features = Features.F1.SetFlag(Features.F3); 
