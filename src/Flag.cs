@@ -111,7 +111,7 @@ public class Flag<T> where T : InfiniteEnum<T>
     {
         var sb = new StringBuilder();
 
-        for (var i = Bits.Count - 1; i >= 0; i--)
+        for (var i = 0; i < Bits.Count; i++)
         {
             var c = Bits[i] ? '1' : '0';
             sb.Append(c);
