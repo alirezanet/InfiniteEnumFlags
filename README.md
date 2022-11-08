@@ -80,6 +80,8 @@ Console.WriteLine(features == new_features); // true
 ```
 
 ## Example
+One of the reasonable use cases that shows why we need this library is developing a flexible authorization in asp.net core applications that [@Json Taylor](https://github.com/jasontaylordev) presented very well in [this video](https://www.youtube.com/watch?v=BVJVhceN3N4&list=PLxCsNpHrt57uwt229Frf1tYt2gywF__xg&index=1&t=1265s). Still, his version had a massive limitation in bigger projects. I provided an example with InfiniteEnumFlags of the same demo in the video.
+
 To see flexible aspnetcore authorization example using InfiniteEnumFlags, first clone the repo using below command
 ```
  git clone --recurse-submodules https://github.com/alirezanet/InfiniteEnumFlags.git
