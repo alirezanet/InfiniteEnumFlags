@@ -86,6 +86,12 @@ To see flexible aspnetcore authorization example using InfiniteEnumFlags, first 
 ```
 then you can open `\InfiniteEnumFlags\Example\flexible-aspnetcore-authorization\FlexibleAuth\FlexibleAuth.sln` and then run the `Server` project.
 
+Admin Username: `admin@localhost`
+
+Auditor Username: `auditor@localhost`
+
+Default Password: `Password123!`
+
 ## Support
 
 - Don't forget to give a ⭐ on [GitHub](https://github.com/alirezanet/InfiniteEnumFlags)
