@@ -69,13 +69,13 @@ features.HasFlag(Features.F2); // false
 ### Storing Flag's value
 
 Since we want to support more than 32 items in our enums, we can not store an integer
-value, luckily we can use `ToBase64Key()` function to get a unique base64 key, and to convert it back to an
-Flag, we can use `FromBase64()` static method.
+value, luckily we can use `ToUniqueId()` function to get a unique base64 key, and to convert it back to an
+Flag, we can use `FromUniqueId()` static method.
 
 ```csharp
 var features = Features.F1.SetFlag(Features.F3); 
-string key = features.ToBase64Key();
-var new_features = Features.FromBase64(key); 
+string id = features.ToUniqueId();
+var new_features = Features.FromUniqueId(id); 
 Console.WriteLine(features == new_features); // true
 ```
 
