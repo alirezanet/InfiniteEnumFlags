@@ -122,7 +122,9 @@ public class Flag<T>
         return sb.ToString();
     }
 
-    public string ToUniqueId(string? salt = null)
+    public string ToUniqueId() => ToUniqueId(null);
+
+    public string ToUniqueId(string? salt)
     {
         var data = ToBytes();
         using var compressedStream = new MemoryStream();
@@ -190,7 +192,8 @@ public class Flag<T>
         return new Flag<T>(bytes);
     }
 
-    public static Flag<T> FromUniqueId(string id, string? salt = null)
+    public static Flag<T> FromUniqueId(string id) => FromUniqueId(id, null);
+    public static Flag<T> FromUniqueId(string id, string? salt)
     {
         var data = Convert.FromBase64String(id);
         using var compressedStream = new MemoryStream(data);
