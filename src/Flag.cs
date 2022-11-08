@@ -3,7 +3,7 @@ using System.Text;
 
 namespace InfiniteEnumFlags;
 
-public class Flag<T>
+public class Flag<T> where T : InfiniteEnum<T>
 {
     internal readonly BitArray Bits;
 
