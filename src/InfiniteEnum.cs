@@ -24,8 +24,13 @@ public abstract class InfiniteEnum<T>
         }
     }
 
-    public static Flag<T> FromBase64Key(string key)
+    public static Flag<T> FromBase64(string base64)
     {
-        return Flag<T>.FromBase64(key);
+        return Flag<T>.FromBase64(base64);
+    }
+
+    public static Flag<T> FromUniqueId(string id, string? salt = null)
+    {
+        return Flag<T>.FromUniqueId(id, salt);
     }
 }

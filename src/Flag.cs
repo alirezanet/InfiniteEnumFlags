@@ -1,11 +1,13 @@
 using System.Collections;
+using System.IO.Compression;
 using System.Text;
 
 namespace InfiniteEnumFlags;
 
-public class Flag<T> where T : InfiniteEnum<T>
+public class Flag<T>
 {
     internal readonly BitArray Bits;
+    public int Length => Bits.Length;
 
     /// <summary>
     /// 
@@ -105,7 +107,7 @@ public class Flag<T> where T : InfiniteEnum<T>
         return new Flag<T>(x.Not());
     }
 
-    public override string ToString() => ToBase64Key();
+    public override string ToString() => ToBase64();
 
     public string ToBinaryString()
     {
@@ -120,7 +122,22 @@ public class Flag<T> where T : InfiniteEnum<T>
         return sb.ToString();
     }
 
-    public string ToBase64Key()
+    public string ToUniqueId(string? salt = null)
+    {
+        var data = ToBytes();
+        using var compressedStream = new MemoryStream();
+        using var zipStream = new DeflateStream(compressedStream, CompressionLevel.Fastest);
+        zipStream.Write(data, 0, data.Length);
+        if (salt is not null)
+        {
+            var saltBytes = Encoding.UTF8.GetBytes(salt);
+            zipStream.Write(saltBytes);
+        }
+        zipStream.Close();
+        return Convert.ToBase64String(compressedStream.ToArray());
+    }
+
+    public string ToBase64()
     {
         var bytes = ToBytes().AsSpan();
         var index = 0;
@@ -161,16 +178,31 @@ public class Flag<T> where T : InfiniteEnum<T>
         return Bits.GetHashCode() * 31;
     }
 
-    public string ToBase64String()
-    {
-        var bytes = ToBytes();
-        return Convert.ToBase64String(bytes);
-    }
-
     public static Flag<T> FromBase64(string base64)
     {
         var bytes = Convert.FromBase64String(base64);
         return new Flag<T>(bytes);
+    }
+
+    public static Flag<T> FromUniqueId(string id, string? salt = null)
+    {
+        var data = Convert.FromBase64String(id);
+        using var compressedStream = new MemoryStream(data);
+        using var outputStream = new MemoryStream();
+        using var zipStream = new DeflateStream(compressedStream, CompressionMode.Decompress);
+        zipStream.CopyTo(outputStream);
+        zipStream.Close();
+
+        var bytes = outputStream.ToArray();
+        if (salt is null) return new Flag<T>(bytes);
+
+        var saltBytes = Encoding.UTF8.GetBytes(salt);
+        var saltIndex = bytes.Length - saltBytes.Length;
+        var actualSalt = bytes.AsSpan(saltIndex);
+        if (!actualSalt.SequenceEqual(saltBytes))
+            throw new InvalidOperationException("salt is not valid");
+
+        return new Flag<T>(bytes.AsSpan(0, saltIndex).ToArray());
     }
 
     public byte[] ToBytes()

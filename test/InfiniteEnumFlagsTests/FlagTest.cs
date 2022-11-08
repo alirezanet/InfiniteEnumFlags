@@ -84,7 +84,7 @@ public class FlagTest
         var expected = Convert.ToBase64String(integerValue.ToByteArray());
 
         // Act
-        var actual = x.ToBase64String();
+        var actual = x.ToBase64();
 
         // Assert
         actual.Should().Be(expected, x.ToString());
@@ -129,7 +129,7 @@ public class FlagTest
     {
         // Arrange
         var flags = TestEnum.F2 | TestEnum.F7 | TestEnum.F8;
-        var hex = flags.ToBase64String();
+        var hex = flags.ToBase64();
 
         // Act
         var newFlags = Flag<TestEnum>.FromBase64(hex);
@@ -143,10 +143,10 @@ public class FlagTest
     {
         // Arrange
         var e1 = new Flag(5, 10);
-        var base1 = e1.ToBase64String();
+        var base1 = e1.ToBase64();
 
         var e2 = new Flag(5, 50);
-        var base2 = e2.ToBase64String();
+        var base2 = e2.ToBase64();
 
         // Act
         var newEnum1 = Flag.FromBase64(base1);
@@ -171,14 +171,15 @@ public class FlagTest
     [InlineData(3, 4, 2)]
     [InlineData(4, 3, 2)]
     [InlineData(1200, 380, 253)]
-    public void ToBase64Key_WithDifferentLength_MustHaveEqualKeyAndItems(int firstLength, int secondLength, int index)
+    public void ToBase64Trimmed_WithDifferentLength_MustHaveEqualKeyAndItems(int firstLength, int secondLength,
+        int index)
     {
         // Arrange
         var e1 = new Flag(index, firstLength);
-        var key1 = e1.ToBase64Key();
+        var key1 = e1.ToBase64();
 
         var e2 = new Flag(index, secondLength);
-        var key2 = e2.ToBase64Key();
+        var key2 = e2.ToBase64();
 
         // Act
         var newEnum1 = Flag.FromBase64(key1);
@@ -186,7 +187,7 @@ public class FlagTest
 
         // Assert
         key1.Should().Be(key2);
-        newEnum1.ToBase64Key().Should().Be(key1);
+        newEnum1.ToBase64().Should().Be(key1);
 
         newEnum1.Should().Be(e1);
         newEnum1.Should().Be(e2);
@@ -194,8 +195,26 @@ public class FlagTest
         newEnum2.Should().Be(e1);
         newEnum2.Should().Be(e2);
         newEnum1.Should().Be(newEnum2);
-
     }
 
+    [Fact]
+    public void ToUniqueId_FromUniqueId_WithoutSalt_ShouldBeGiveOriginalFlag()
+    {
+        var features = new Flag(125) | new Flag(122) | new Flag(10);
+        var id = features.ToUniqueId();
+        var new_features = Flag.FromUniqueId(id);
 
+        features.Should().Be(new_features);
+    }
+
+    [Fact]
+    public void ToUniqueId_FromUniqueId_WithSalt_ShouldBeGiveOriginalFlag()
+    {
+        const string salt = "salt";
+        var features = new Flag(15) | new Flag(12) | new Flag(110);
+        var id = features.ToUniqueId(salt);
+        var new_features = Flag.FromUniqueId(id, salt);
+
+        features.Should().Be(new_features);
+    }
 }
