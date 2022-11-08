@@ -73,7 +73,7 @@ value, luckily we can use `ToUniqueId()` function to get a unique base64 key, an
 Flag, we can use `FromUniqueId()` static method.
 
 ```csharp
-var features = Features.F1.SetFlag(Features.F3); 
+var features = Features.F1 | Features.F3; 
 string id = features.ToUniqueId();
 var new_features = Features.FromUniqueId(id); 
 Console.WriteLine(features == new_features); // true
