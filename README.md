@@ -63,6 +63,7 @@ Alternatively, If you don't like bitwise Operators, you can use the Flag<> exten
 
 e.g
 ```csharp
+var features = Features.F1.SetFlag(Features.F3);
 features.HasFlag(Features.F2); // false
 ```
 
