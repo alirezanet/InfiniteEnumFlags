@@ -33,6 +33,20 @@ public class ExtensionsTest
     }
 
     [Fact]
+    public void HasFlag_MultipleFeatures()
+    {
+        // Arrange
+        var flag = Enums.TestEnum.F1;
+        var features = Enums.TestEnum.F5 | Enums.TestEnum.F1 | Enums.TestEnum.F2;
+
+        // Act
+        var result = flag.HasFlag(features);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Fact]
     public void ToggleFlag()
     {
         // Arrange

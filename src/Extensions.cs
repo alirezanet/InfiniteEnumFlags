@@ -4,7 +4,7 @@ public static class Extensions
 {
     public static bool HasFlag<T>(this Flag<T> a, Flag<T> b)
     {
-        return (a & b) == b;
+        return (a & b) != new Flag<T>(-1);
     }
 
     public static Flag<T> SetFlag<T>(this Flag<T> a, params Flag<T>[] b)
