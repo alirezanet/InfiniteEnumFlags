@@ -14,8 +14,8 @@ jobs:
       with:
         dotnet-version: 7.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore cicd.sln
     - name: Build
-      run: dotnet build -c Release --no-restore
+      run: dotnet build cicd.sln -c Release --no-restore
     - name: Test
-      run: dotnet test -c Release --no-build --verbosity normal
+      run: dotnet test cicd.sln -c Release --no-build --verbosity normal

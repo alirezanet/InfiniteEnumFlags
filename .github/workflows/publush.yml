@@ -15,11 +15,11 @@ jobs:
            with:
               dotnet-version: 7.0.x
          - name: Restore dependencies
-           run: dotnet restore
+           run: dotnet restore cicd.sln
          - name: Build
-           run: dotnet build --configuration Release --no-restore
+           run: dotnet build cicd.sln --configuration Release --no-restore
          - name: Test
-           run: dotnet test --configuration Release --no-build --verbosity normal
+           run: dotnet test cicd.sln --configuration Release --no-build --verbosity normal
          - name: Publish InfiniteEnumFlags
            uses: alirezanet/publish-nuget@v3.0.0
            with:
