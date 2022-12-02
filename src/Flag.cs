@@ -107,7 +107,7 @@ public class Flag<T>
         return new Flag<T>(x.Not());
     }
 
-    public override string ToString() => ToBase64Trimmed();
+    public override string ToString() => ToUniqueId();
 
     public string ToBinaryString()
     {
