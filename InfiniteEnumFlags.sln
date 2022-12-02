@@ -9,6 +9,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{7AE38E62-8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfiniteEnumFlagsTests", "test\InfiniteEnumFlagsTests\InfiniteEnumFlagsTests.csproj", "{696779D2-77F6-4DC1-B68B-C42C47E1ED70}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexibleAuth.Server", "Example\flexible-aspnetcore-authorization\FlexibleAuth\Server\FlexibleAuth.Server.csproj", "{287EA4E5-F64D-472B-A57E-895D0A35F6F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexibleAuth.Shared", "Example\flexible-aspnetcore-authorization\FlexibleAuth\Shared\FlexibleAuth.Shared.csproj", "{623951BB-054A-4884-90D5-2E8067080206}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexibleAuth.Client", "Example\flexible-aspnetcore-authorization\FlexibleAuth\Client\FlexibleAuth.Client.csproj", "{F53C5439-AB91-4978-A69F-20C08A971323}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +32,18 @@ Global
 		{696779D2-77F6-4DC1-B68B-C42C47E1ED70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{696779D2-77F6-4DC1-B68B-C42C47E1ED70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{696779D2-77F6-4DC1-B68B-C42C47E1ED70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{287EA4E5-F64D-472B-A57E-895D0A35F6F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{287EA4E5-F64D-472B-A57E-895D0A35F6F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{287EA4E5-F64D-472B-A57E-895D0A35F6F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{287EA4E5-F64D-472B-A57E-895D0A35F6F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{623951BB-054A-4884-90D5-2E8067080206}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{623951BB-054A-4884-90D5-2E8067080206}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{623951BB-054A-4884-90D5-2E8067080206}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{623951BB-054A-4884-90D5-2E8067080206}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F53C5439-AB91-4978-A69F-20C08A971323}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F53C5439-AB91-4978-A69F-20C08A971323}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F53C5439-AB91-4978-A69F-20C08A971323}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F53C5439-AB91-4978-A69F-20C08A971323}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{696779D2-77F6-4DC1-B68B-C42C47E1ED70} = {7AE38E62-87EA-4005-9AF2-5368176088BF}
