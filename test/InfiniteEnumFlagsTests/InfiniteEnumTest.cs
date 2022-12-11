@@ -18,4 +18,33 @@ public class InfiniteEnumTest
         // Assert
         actual.Should().Be(expected);
     }
+
+    [Fact]
+    public void GetNames_Should_Return_EnumNames()
+    {
+        // Act
+        var items = TestEnum.GetNames().ToList();
+
+        // Assert
+        items.Count().Should().Be(9);
+        items.First().Should().Be("None");
+    }
+
+    [Fact]
+    public void GetKeyValues_ShouldReturnNameAndValues()
+    {
+        // Act
+        var items = TestEnum.GetKeyValues();
+
+        // Assert
+        items.Count.Should().Be(9);
+
+        var first = items.First();
+        first.Key.Should().Be("None");
+        first.Value.Should().Be(TestEnum.None);
+
+        var last = items.Last();
+        last.Key.Should().Be("F8");
+        last.Value.Should().Be(TestEnum.F8);
+    }
 }
