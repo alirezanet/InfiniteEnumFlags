@@ -23,10 +23,10 @@ public abstract class InfiniteEnum<T>
             .ToDictionary(f => f.Name, f => (Flag<T>) f.GetValue(null)!);
     }
 
-    public static Flag<T>? FromName(string name)
+    public static Flag<T>? FromName(string name, BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Static)
     {
         return typeof(T)
-            .GetField(name, BindingFlags.Public | BindingFlags.Static)?
+            .GetField(name, bindingFlags)?
             .GetValue(null) as Flag<T>;
     }
 
