@@ -6,24 +6,36 @@ namespace InfiniteEnumFlags;
 public abstract class InfiniteEnum<T>
 {
 
-    public static IEnumerable<string> GetNames(BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Static)
+    public static IEnumerable<string> GetNames()
     {
-         return typeof(T) 
-            .GetFields(bindingFlags)
-            .Where(f => f.FieldType == typeof(Flag<T>))
-            .Select(f => f.Name);
+        return GetNames(BindingFlags.Public | BindingFlags.Static);
+    }
+    public static IEnumerable<string> GetNames(BindingFlags bindingFlags)
+    {
+        return typeof(T)
+           .GetFields(bindingFlags)
+           .Where(f => f.FieldType == typeof(Flag<T>))
+           .Select(f => f.Name);
     }
 
-    public static Dictionary<string,Flag<T>> GetKeyValues(
-        BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Static)
+    public static Dictionary<string, Flag<T>> GetKeyValues()
     {
-        return typeof(T) 
-            .GetFields(bindingFlags)
-            .Where(f => f.FieldType == typeof(Flag<T>))
-            .ToDictionary(f => f.Name, f => (Flag<T>) f.GetValue(null)!);
+        return GetKeyValues(BindingFlags.Public | BindingFlags.Static);
     }
 
-    public static Flag<T>? FromName(string name, BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Static)
+    public static Dictionary<string, Flag<T>> GetKeyValues(BindingFlags bindingFlags)
+    {
+        return typeof(T)
+            .GetFields(bindingFlags)
+            .Where(f => f.FieldType == typeof(Flag<T>))
+            .ToDictionary(f => f.Name, f => (Flag<T>)f.GetValue(null)!);
+    }
+
+    public static Flag<T>? FromName(string name)
+    {
+        return FromName(name,BindingFlags.Public | BindingFlags.Static);
+    }
+    public static Flag<T>? FromName(string name, BindingFlags bindingFlags)
     {
         return typeof(T)
             .GetField(name, bindingFlags)?
