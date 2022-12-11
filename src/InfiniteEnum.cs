@@ -5,6 +5,24 @@ namespace InfiniteEnumFlags;
 
 public abstract class InfiniteEnum<T>
 {
+
+    public static IEnumerable<string> GetNames(BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Static)
+    {
+         return typeof(T) 
+            .GetFields(bindingFlags)
+            .Where(f => f.FieldType == typeof(Flag<T>))
+            .Select(f => f.Name);
+    }
+
+    public static Dictionary<string,Flag<T>> GetKeyValues(
+        BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Static)
+    {
+        return typeof(T) 
+            .GetFields(bindingFlags)
+            .Where(f => f.FieldType == typeof(Flag<T>))
+            .ToDictionary(f => f.Name, f => (Flag<T>) f.GetValue(null)!);
+    }
+
     public static Flag<T>? FromName(string name)
     {
         return typeof(T)
