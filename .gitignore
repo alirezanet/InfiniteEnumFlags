@@ -351,3 +351,4 @@ MigrationBackup/
 .idea
 
 !.husky/csx
+.vscode
