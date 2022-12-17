@@ -1,7 +1,8 @@
 # InfiniteEnumFlags
 <!--  ![Nuget](https://img.shields.io/nuget/v/InfiniteEnumFlags?label=stable) -->
-![GitHub](https://img.shields.io/github/license/alirezanet/InfiniteEnumFlags) ![Nuget](https://img.shields.io/nuget/dt/InfiniteEnumFlags?color=%239100ff) ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/InfiniteEnumFlags?label=latest) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/alirezanet/InfiniteEnumFlags/Publish%20Packages?label=checks)
+![GitHub](https://img.shields.io/github/license/alirezanet/InfiniteEnumFlags) ![Nuget](https://img.shields.io/nuget/dt/InfiniteEnumFlags?color=%239100ff) ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/InfiniteEnumFlags?label=latest)
 [![NuGet version (InfiniteEnumFlags)](https://img.shields.io/nuget/v/InfiniteEnumFlags.svg?style=flat-square)](https://www.nuget.org/packages/InfiniteEnumFlags/)
+<!-- ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/alirezanet/InfiniteEnumFlags/.github/workflows/publish.yml?branch=master) -->
 
 *Status: (Project is in active development)*
 
