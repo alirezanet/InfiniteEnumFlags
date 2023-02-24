@@ -4,8 +4,6 @@
 [![NuGet version (InfiniteEnumFlags)](https://img.shields.io/nuget/v/InfiniteEnumFlags.svg?style=flat-square)](https://www.nuget.org/packages/InfiniteEnumFlags/)
 <!-- ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/alirezanet/InfiniteEnumFlags/.github/workflows/publish.yml?branch=master) -->
 
-*Status: (Project is in active development)*
-
 
 The dotnet enum flags feature is amazing, but it is too limited 🙁. InfiniteEnumFlags is the same without limitation. 😊
 
