@@ -4,9 +4,6 @@
 [![NuGet version (InfiniteEnumFlags)](https://img.shields.io/nuget/v/InfiniteEnumFlags.svg?style=flat-square)](https://www.nuget.org/packages/InfiniteEnumFlags/)
 <!-- ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/alirezanet/InfiniteEnumFlags/.github/workflows/publish.yml?branch=master) -->
 
-
-The dotnet enum flags feature is amazing, but it is too limited 🙁. InfiniteEnumFlags is the same without limitation. 😊
-
 ## Introduction
 Dotnet Enum has an `[Flags]` attribute that gives us the ability to have a binary enum system and use bitwise operators. 
 However, enum specifically restricts to built-in numeric types which is a big problem because it is limited to 2^32 for `int` 
