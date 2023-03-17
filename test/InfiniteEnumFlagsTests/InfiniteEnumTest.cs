@@ -31,6 +31,21 @@ public class InfiniteEnumTest
     }
 
     [Fact]
+    public void GetNames_WithCustomFlags_Should_Return_EnumNames()
+    {
+        // Arrange
+        var features = TestEnum.F2 | TestEnum.F4;
+
+        // Act
+        var names = TestEnum.GetNames(features).ToList();
+
+        // Assert
+        names.Should().Contain("F2");
+        names.Should().Contain("F4");
+        names.Should().NotContain("F3");
+    }
+
+    [Fact]
     public void GetKeyValues_ShouldReturnNameAndValues()
     {
         // Act

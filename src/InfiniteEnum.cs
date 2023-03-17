@@ -5,17 +5,29 @@ namespace InfiniteEnumFlags;
 
 public abstract class InfiniteEnum<T>
 {
-
     public static IEnumerable<string> GetNames()
     {
         return GetNames(BindingFlags.Public | BindingFlags.Static);
     }
+
     public static IEnumerable<string> GetNames(BindingFlags bindingFlags)
     {
         return typeof(T)
-           .GetFields(bindingFlags)
-           .Where(f => f.FieldType == typeof(Flag<T>))
-           .Select(f => f.Name);
+            .GetFields(bindingFlags)
+            .Where(f => f.FieldType == typeof(Flag<T>))
+            .Select(f => f.Name);
+    }
+
+    public static IEnumerable<string> GetNames(Flag<T> enumFlag, BindingFlags bindingFlags)
+    {
+        return GetKeyValues()
+            .Where(x => enumFlag.HasFlag(x.Value))
+            .Select(x => x.Key);
+    }
+
+    public static IEnumerable<string> GetNames(Flag<T> enumFlag)
+    {
+        return GetNames(enumFlag, BindingFlags.Public | BindingFlags.Static);
     }
 
     public static Dictionary<string, Flag<T>> GetKeyValues()
@@ -33,8 +45,9 @@ public abstract class InfiniteEnum<T>
 
     public static Flag<T>? FromName(string name)
     {
-        return FromName(name,BindingFlags.Public | BindingFlags.Static);
+        return FromName(name, BindingFlags.Public | BindingFlags.Static);
     }
+
     public static Flag<T>? FromName(string name, BindingFlags bindingFlags)
     {
         return typeof(T)
