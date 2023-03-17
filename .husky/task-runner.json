@@ -5,6 +5,7 @@
          "group": "pre-commit",
          "args": [
             "dotnet-format",
+            "InfiniteEnumFlags.sln",
             "--include",
             "${staged}"
          ],
