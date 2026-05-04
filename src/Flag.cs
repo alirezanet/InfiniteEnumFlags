@@ -175,7 +175,7 @@ public class Flag<T> : IEquatable<Flag<T>>
         var bytes = ToBytes();
         var length = GetNormalizedByteLength(bytes);
         var fingerprint = GetScopeFingerprint(scope);
-        var payloadLength = sizeof(ulong) + length;
+        var payloadLength = sizeof(uint) + length;
 
         byte[]? rentedPayload = null;
         Span<byte> payload = payloadLength <= 256
@@ -184,8 +184,8 @@ public class Flag<T> : IEquatable<Flag<T>>
 
         try
         {
-            WriteUInt64LittleEndian(payload, fingerprint);
-            WriteMaskedValue(bytes.AsSpan(0, length), payload[sizeof(ulong)..payloadLength], fingerprint);
+            WriteUInt32LittleEndian(payload, fingerprint);
+            WriteMaskedValue(bytes.AsSpan(0, length), payload[sizeof(uint)..payloadLength], fingerprint);
             return Base64UrlEncode(payload[..payloadLength]);
         }
         finally
@@ -255,20 +255,20 @@ public class Flag<T> : IEquatable<Flag<T>>
         if (scope is null) throw new ArgumentNullException(nameof(scope));
 
         var payload = Base64UrlDecode(id);
-        if (payload.Length < sizeof(ulong))
+        if (payload.Length < sizeof(uint))
             throw new FormatException("Invalid scoped flag id.");
 
         var expectedFingerprint = GetScopeFingerprint(scope);
-        var actualFingerprint = ReadUInt64LittleEndian(payload);
+        var actualFingerprint = ReadUInt32LittleEndian(payload);
         if (actualFingerprint != expectedFingerprint)
             throw new InvalidOperationException("Flag id scope is not valid.");
 
-        var valueLength = payload.Length - sizeof(ulong);
+        var valueLength = payload.Length - sizeof(uint);
         if (valueLength == 0)
             return new Flag<T>(-1);
 
         var valueBytes = new byte[valueLength];
-        WriteMaskedValue(payload.AsSpan(sizeof(ulong), valueLength), valueBytes, actualFingerprint);
+        WriteMaskedValue(payload.AsSpan(sizeof(uint), valueLength), valueBytes, actualFingerprint);
         return new Flag<T>(valueBytes);
     }
 
@@ -406,10 +406,10 @@ public class Flag<T> : IEquatable<Flag<T>>
         return typeof(T).FullName ?? typeof(T).Name;
     }
 
-    private static ulong GetScopeFingerprint(string scope)
+    private static uint GetScopeFingerprint(string scope)
     {
-        const ulong offset = 14695981039346656037;
-        const ulong prime = 1099511628211;
+        const uint offset = 2166136261;
+        const uint prime = 16777619;
 
         var hash = offset;
         foreach (var c in scope)
@@ -423,9 +423,9 @@ public class Flag<T> : IEquatable<Flag<T>>
         return hash;
     }
 
-    private static void WriteMaskedValue(ReadOnlySpan<byte> source, Span<byte> destination, ulong fingerprint)
+    private static void WriteMaskedValue(ReadOnlySpan<byte> source, Span<byte> destination, uint fingerprint)
     {
-        var state = fingerprint;
+        ulong state = fingerprint;
         for (var i = 0; i < source.Length; i++)
         {
             if ((i & 7) == 0)
@@ -444,17 +444,17 @@ public class Flag<T> : IEquatable<Flag<T>>
         return result ^ (result >> 31);
     }
 
-    private static void WriteUInt64LittleEndian(Span<byte> destination, ulong value)
+    private static void WriteUInt32LittleEndian(Span<byte> destination, uint value)
     {
-        for (var i = 0; i < sizeof(ulong); i++)
+        for (var i = 0; i < sizeof(uint); i++)
             destination[i] = (byte)(value >> (i * 8));
     }
 
-    private static ulong ReadUInt64LittleEndian(ReadOnlySpan<byte> source)
+    private static uint ReadUInt32LittleEndian(ReadOnlySpan<byte> source)
     {
-        ulong value = 0;
-        for (var i = 0; i < sizeof(ulong); i++)
-            value |= (ulong)source[i] << (i * 8);
+        uint value = 0;
+        for (var i = 0; i < sizeof(uint); i++)
+            value |= (uint)source[i] << (i * 8);
 
         return value;
     }
