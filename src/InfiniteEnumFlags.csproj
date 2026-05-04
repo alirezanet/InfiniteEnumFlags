@@ -10,7 +10,8 @@
     <PackageId>InfiniteEnumFlags</PackageId>
     <Authors>Alireza Sabouri</Authors>
     <Company>TuxTeam</Company>
-    <PackageDescription>The dotnet enum flags feature is amazing, but it is too limited 🙁. InfiniteEnumFlags is the same without limitation. 😊</PackageDescription>
+    <PackageDescription>InfiniteEnumFlags brings C# [Flags] enums to unlimited size with fast bitwise operations and compact,
+  reversible IDs for storage.</PackageDescription>
     <RepositoryUrl>https://github.com/alirezanet/InfiniteEnumFlags</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <LangVersion>latest</LangVersion>
