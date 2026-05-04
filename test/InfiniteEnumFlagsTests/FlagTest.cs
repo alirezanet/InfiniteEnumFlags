@@ -267,35 +267,96 @@ public class FlagTest
     }
 
     [Fact]
-    public void ToUniqueId_FromUniqueId_WithoutSalt_ShouldBeGiveOriginalFlag()
+    public void ToId_WithCommonFlags_ShouldReturnShortReadableStorageIds()
+    {
+        new Flag(-1).ToId().Should().Be("0");
+        new Flag(0).ToId().Should().Be("AQ");
+        new Flag(1).ToId().Should().Be("Ag");
+        new Flag(2).ToId().Should().Be("BA");
+        (new Flag(0) | new Flag(1)).ToId().Should().Be("Aw");
+        new Flag(100).ToId().Should().Be("AAAAAAAAAAAAAAAAEA");
+    }
+
+    [Fact]
+    public void ToId_FromId_ShouldRoundTrip()
     {
         var features = new Flag(125) | new Flag(122) | new Flag(10);
-        var id = features.ToUniqueId();
-        var new_features = Flag.FromUniqueId(id);
+        var id = features.ToId();
+        var new_features = Flag.FromId(id);
 
         features.Should().Be(new_features);
     }
 
     [Fact]
-    public void ToUniqueId_FromUniqueId_WithSalt_ShouldBeGiveOriginalFlag()
+    public void ToId_WithDifferentInternalLengths_ShouldReturnSameCanonicalId()
     {
-        const string salt = "salt";
-        var features = new Flag(15) | new Flag(12) | new Flag(110);
-        var id = features.ToUniqueId(salt);
-        var new_features = Flag.FromUniqueId(id, salt);
+        var e1 = new Flag(5, 10);
+        var e2 = new Flag(5, 50);
 
-        features.Should().Be(new_features);
+        e1.Should().Be(e2);
+        e1.ToId().Should().Be(e2.ToId());
     }
 
     [Fact]
-    public void FromUniqueId_WithWrongSalt_ShouldThrow()
+    public void FromId_WithNoneId_ShouldReturnEmptyFlag()
     {
-        const string salt = "salt";
-        var features = new Flag(15) | new Flag(12) | new Flag(110);
-        var id = features.ToUniqueId(salt);
+        var flag = Flag.FromId("0");
 
-        var action = () => Flag.FromUniqueId(id, "wrong-salt");
+        flag.Should().Be(new Flag(-1));
+        flag.IsEmpty.Should().BeTrue();
+    }
+
+    [Fact]
+    public void FromId_WithInvalidId_ShouldThrow()
+    {
+        var action = () => Flag.FromId("A");
+
+        action.Should().Throw<FormatException>();
+    }
+
+    [Fact]
+    public void ToScopedId_FromScopedId_ShouldRoundTripWithDefaultScope()
+    {
+        var features = TestEnum.F1 | TestEnum.F4 | TestEnum.F8;
+        var id = features.ToScopedId();
+
+        var restored = TestEnum.FromScopedId(id);
+
+        restored.Should().Be(features);
+    }
+
+    [Fact]
+    public void ToScopedId_ShouldNotExposeRawValueId()
+    {
+        var flag = TestEnum.F1;
+
+        var rawId = flag.ToId();
+        var scopedId = flag.ToScopedId();
+
+        rawId.Should().Be("AQ");
+        scopedId.Should().NotBe(rawId);
+        scopedId.Should().NotContain(rawId);
+    }
+
+    [Fact]
+    public void FromScopedId_WithWrongScope_ShouldThrow()
+    {
+        var id = TestEnum.F1.ToScopedId("permissions");
+
+        var action = () => TestEnum.FromScopedId(id, "features");
 
         action.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void ToScopedId_WithCustomScope_ShouldRoundTrip()
+    {
+        const string scope = "shared-permissions-v1";
+        var features = TestEnum.F2 | TestEnum.F6;
+
+        var id = features.ToScopedId(scope);
+        var restored = TestEnum.FromScopedId(id, scope);
+
+        restored.Should().Be(features);
     }
 }

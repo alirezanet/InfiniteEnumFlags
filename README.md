@@ -133,25 +133,50 @@ var allPermissions = Permissions.All;
 
 ## Store and restore values
 
-Use `ToUniqueId` when you need a compact string value for storage.
+Use `ToId` when you need a compact string value for storage.
+
+IDs are canonical: equal flags produce the same ID even if they were created with different internal bit lengths. The format is normalized bytes encoded as unpadded base64url, with `"0"` reserved for `None`.
 
 ```csharp
 var permissions = Permissions.ReadUsers | Permissions.ViewReports;
 
-string id = permissions.ToUniqueId();
-var restored = Permissions.FromUniqueId(id);
+string id = permissions.ToId();
+var restored = Permissions.FromId(id);
 
 Console.WriteLine(permissions == restored); // true
 ```
 
-You can also add a salt:
+Small values stay small:
+
+| Value | ID |
+|---|---|
+| `None` | `0` |
+| `ReadUsers` | `AQ` |
+| `CreateUsers` | `Ag` |
+| `ReadUsers | CreateUsers` | `Aw` |
+| `DeleteUsers` | `BA` |
+
+For plain padded base64 storage, use `ToBase64String`, `ToBase64Trimmed`, and `FromBase64`.
+
+### Scoped IDs
+
+`ToId` stores only the flag value. That keeps IDs tiny and close to native enum behavior.
+
+If values from different enum classes may share the same database column, queue, or API field, use scoped IDs:
 
 ```csharp
-string id = permissions.ToUniqueId("my-app");
-var restored = Permissions.FromUniqueId(id, "my-app");
+string id = permissions.ToScopedId();
+var restored = Permissions.FromScopedId(id);
 ```
 
-For plain base64 storage, use `ToBase64String`, `ToBase64Trimmed`, and `FromBase64`.
+The default scope is the enum class name. You can override it when multiple enum classes should intentionally share the same ID space:
+
+```csharp
+string id = permissions.ToScopedId("permissions-v1");
+var restored = Permissions.FromScopedId(id, "permissions-v1");
+```
+
+Scoped IDs are still compact, but they are not just a visible prefix. The scope changes the encoded value, so the raw value ID is not exposed inside the scoped ID.
 
 ## Notes
 

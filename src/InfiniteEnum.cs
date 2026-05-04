@@ -127,11 +127,19 @@ public abstract class InfiniteEnum<T>
         return Flag<T>.FromBase64(base64);
     }
 
-    public static Flag<T> FromUniqueId(string id) => FromUniqueId(id, null);
-
-    public static Flag<T> FromUniqueId(string id, string? salt)
+    public static Flag<T> FromId(string id)
     {
-        return Flag<T>.FromUniqueId(id, salt);
+        return Flag<T>.FromId(id);
+    }
+
+    public static Flag<T> FromScopedId(string id)
+    {
+        return Flag<T>.FromScopedId(id);
+    }
+
+    public static Flag<T> FromScopedId(string id, string scope)
+    {
+        return Flag<T>.FromScopedId(id, scope);
     }
 
     private static bool IsFlagField(FieldInfo field)

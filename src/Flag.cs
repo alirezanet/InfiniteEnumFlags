@@ -1,6 +1,5 @@
+using System.Buffers;
 using System.Collections;
-using System.IO.Compression;
-using System.Text;
 
 namespace InfiniteEnumFlags;
 
@@ -148,7 +147,7 @@ public class Flag<T> : IEquatable<Flag<T>>
         return new Flag<T>(x.Not());
     }
 
-    public override string ToString() => ToUniqueId();
+    public override string ToString() => ToId();
 
     public string ToBinaryString()
     {
@@ -160,21 +159,40 @@ public class Flag<T> : IEquatable<Flag<T>>
         return new string(chars);
     }
 
-    public string ToUniqueId() => ToUniqueId(null);
-
-    public string ToUniqueId(string? salt)
+    public string ToId()
     {
-        var data = ToBytes();
-        using var compressedStream = new MemoryStream();
-        using var zipStream = new DeflateStream(compressedStream, CompressionLevel.Fastest);
-        zipStream.Write(data, 0, data.Length);
-        if (salt is not null)
+        var bytes = ToBytes();
+        var length = GetNormalizedByteLength(bytes);
+        return length == 0 ? "0" : Base64UrlEncode(bytes.AsSpan(0, length));
+    }
+
+    public string ToScopedId() => ToScopedId(GetDefaultScope());
+
+    public string ToScopedId(string scope)
+    {
+        if (scope is null) throw new ArgumentNullException(nameof(scope));
+
+        var bytes = ToBytes();
+        var length = GetNormalizedByteLength(bytes);
+        var fingerprint = GetScopeFingerprint(scope);
+        var payloadLength = sizeof(ulong) + length;
+
+        byte[]? rentedPayload = null;
+        Span<byte> payload = payloadLength <= 256
+            ? stackalloc byte[payloadLength]
+            : rentedPayload = ArrayPool<byte>.Shared.Rent(payloadLength);
+
+        try
         {
-            var saltBytes = Encoding.UTF8.GetBytes(salt);
-            zipStream.Write(saltBytes);
+            WriteUInt64LittleEndian(payload, fingerprint);
+            WriteMaskedValue(bytes.AsSpan(0, length), payload[sizeof(ulong)..payloadLength], fingerprint);
+            return Base64UrlEncode(payload[..payloadLength]);
         }
-        zipStream.Close();
-        return Convert.ToBase64String(compressedStream.ToArray());
+        finally
+        {
+            if (rentedPayload is not null)
+                ArrayPool<byte>.Shared.Return(rentedPayload);
+        }
     }
 
     public string ToBase64Trimmed()
@@ -198,13 +216,18 @@ public class Flag<T> : IEquatable<Flag<T>>
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
 
-        return GetNormalizedBytes().SequenceEqual(other.GetNormalizedBytes());
+        var bytes = ToBytes();
+        var otherBytes = other.ToBytes();
+        return bytes.AsSpan(0, GetNormalizedByteLength(bytes))
+            .SequenceEqual(otherBytes.AsSpan(0, GetNormalizedByteLength(otherBytes)));
     }
 
     public override int GetHashCode()
     {
         var hashCode = new HashCode();
-        foreach (var value in GetNormalizedBytes())
+        var bytes = ToBytes();
+        var normalizedBytes = bytes.AsSpan(0, GetNormalizedByteLength(bytes));
+        foreach (var value in normalizedBytes)
             hashCode.Add(value);
 
         return hashCode.ToHashCode();
@@ -216,29 +239,37 @@ public class Flag<T> : IEquatable<Flag<T>>
         return new Flag<T>(bytes);
     }
 
-    public static Flag<T> FromUniqueId(string id) => FromUniqueId(id, null);
-    public static Flag<T> FromUniqueId(string id, string? salt)
+    public static Flag<T> FromId(string id)
     {
-        var data = Convert.FromBase64String(id);
-        using var compressedStream = new MemoryStream(data);
-        using var outputStream = new MemoryStream();
-        using var zipStream = new DeflateStream(compressedStream, CompressionMode.Decompress);
-        zipStream.CopyTo(outputStream);
-        zipStream.Close();
+        if (id is null) throw new ArgumentNullException(nameof(id));
+        return id == "0"
+            ? new Flag<T>(-1)
+            : new Flag<T>(Base64UrlDecode(id));
+    }
 
-        var bytes = outputStream.ToArray();
-        if (salt is null) return new Flag<T>(bytes);
+    public static Flag<T> FromScopedId(string id) => FromScopedId(id, GetDefaultScope());
 
-        var saltBytes = Encoding.UTF8.GetBytes(salt);
-        var saltIndex = bytes.Length - saltBytes.Length;
-        if (saltIndex < 0)
-            throw new InvalidOperationException("salt is not valid");
+    public static Flag<T> FromScopedId(string id, string scope)
+    {
+        if (id is null) throw new ArgumentNullException(nameof(id));
+        if (scope is null) throw new ArgumentNullException(nameof(scope));
 
-        var actualSalt = bytes.AsSpan(saltIndex);
-        if (!actualSalt.SequenceEqual(saltBytes))
-            throw new InvalidOperationException("salt is not valid");
+        var payload = Base64UrlDecode(id);
+        if (payload.Length < sizeof(ulong))
+            throw new FormatException("Invalid scoped flag id.");
 
-        return new Flag<T>(bytes.AsSpan(0, saltIndex).ToArray());
+        var expectedFingerprint = GetScopeFingerprint(scope);
+        var actualFingerprint = ReadUInt64LittleEndian(payload);
+        if (actualFingerprint != expectedFingerprint)
+            throw new InvalidOperationException("Flag id scope is not valid.");
+
+        var valueLength = payload.Length - sizeof(ulong);
+        if (valueLength == 0)
+            return new Flag<T>(-1);
+
+        var valueBytes = new byte[valueLength];
+        WriteMaskedValue(payload.AsSpan(sizeof(ulong), valueLength), valueBytes, actualFingerprint);
+        return new Flag<T>(valueBytes);
     }
 
     public byte[] ToBytes()
@@ -262,12 +293,169 @@ public class Flag<T> : IEquatable<Flag<T>>
     private byte[] GetNormalizedBytes()
     {
         var bytes = ToBytes();
+        var length = GetNormalizedByteLength(bytes);
+
+        if (length == 0) return Array.Empty<byte>();
+        if (length == bytes.Length) return bytes;
+
+        var normalizedBytes = new byte[length];
+        Buffer.BlockCopy(bytes, 0, normalizedBytes, 0, length);
+        return normalizedBytes;
+    }
+
+    private static int GetNormalizedByteLength(byte[] bytes)
+    {
         var length = bytes.Length;
 
         while (length > 0 && bytes[length - 1] == 0)
             length--;
 
-        if (length == bytes.Length) return bytes;
-        return bytes[..length];
+        return length;
+    }
+
+    private static string Base64UrlEncode(ReadOnlySpan<byte> bytes)
+    {
+        var base64Length = ((bytes.Length + 2) / 3) * 4;
+        char[]? rentedChars = null;
+        Span<char> chars = base64Length <= 256
+            ? stackalloc char[base64Length]
+            : rentedChars = ArrayPool<char>.Shared.Rent(base64Length);
+
+        try
+        {
+            if (!Convert.TryToBase64Chars(bytes, chars, out var charsWritten))
+                throw new InvalidOperationException("Unable to encode flag id.");
+
+            var outputLength = charsWritten;
+            while (outputLength > 0 && chars[outputLength - 1] == '=')
+                outputLength--;
+
+            for (var i = 0; i < outputLength; i++)
+            {
+                chars[i] = chars[i] switch
+                {
+                    '+' => '-',
+                    '/' => '_',
+                    _ => chars[i]
+                };
+            }
+
+            return new string(chars[..outputLength]);
+        }
+        finally
+        {
+            if (rentedChars is not null)
+                ArrayPool<char>.Shared.Return(rentedChars);
+        }
+    }
+
+    private static byte[] Base64UrlDecode(string id)
+    {
+        var padding = (id.Length % 4) switch
+        {
+            0 => 0,
+            2 => 2,
+            3 => 1,
+            _ => throw new FormatException("Invalid flag id length.")
+        };
+
+        var base64Length = id.Length + padding;
+        char[]? rentedChars = null;
+        Span<char> chars = base64Length <= 256
+            ? stackalloc char[base64Length]
+            : rentedChars = ArrayPool<char>.Shared.Rent(base64Length);
+
+        byte[]? rentedBytes = null;
+        var maxByteLength = (base64Length / 4) * 3;
+        Span<byte> bytes = maxByteLength <= 256
+            ? stackalloc byte[maxByteLength]
+            : rentedBytes = ArrayPool<byte>.Shared.Rent(maxByteLength);
+
+        try
+        {
+            for (var i = 0; i < id.Length; i++)
+            {
+                chars[i] = id[i] switch
+                {
+                    '-' => '+',
+                    '_' => '/',
+                    _ => id[i]
+                };
+            }
+
+            for (var i = id.Length; i < base64Length; i++)
+                chars[i] = '=';
+
+            if (!Convert.TryFromBase64Chars(chars[..base64Length], bytes, out var bytesWritten))
+                throw new FormatException("Invalid flag id.");
+
+            return bytes[..bytesWritten].ToArray();
+        }
+        finally
+        {
+            if (rentedChars is not null)
+                ArrayPool<char>.Shared.Return(rentedChars);
+
+            if (rentedBytes is not null)
+                ArrayPool<byte>.Shared.Return(rentedBytes);
+        }
+    }
+
+    private static string GetDefaultScope()
+    {
+        return typeof(T).FullName ?? typeof(T).Name;
+    }
+
+    private static ulong GetScopeFingerprint(string scope)
+    {
+        const ulong offset = 14695981039346656037;
+        const ulong prime = 1099511628211;
+
+        var hash = offset;
+        foreach (var c in scope)
+        {
+            hash ^= (byte)c;
+            hash *= prime;
+            hash ^= (byte)(c >> 8);
+            hash *= prime;
+        }
+
+        return hash;
+    }
+
+    private static void WriteMaskedValue(ReadOnlySpan<byte> source, Span<byte> destination, ulong fingerprint)
+    {
+        var state = fingerprint;
+        for (var i = 0; i < source.Length; i++)
+        {
+            if ((i & 7) == 0)
+                state = NextMaskState(state);
+
+            destination[i] = (byte)(source[i] ^ (byte)(state >> ((i & 7) * 8)));
+        }
+    }
+
+    private static ulong NextMaskState(ulong state)
+    {
+        state += 0x9E3779B97F4A7C15;
+        var result = state;
+        result = (result ^ (result >> 30)) * 0xBF58476D1CE4E5B9;
+        result = (result ^ (result >> 27)) * 0x94D049BB133111EB;
+        return result ^ (result >> 31);
+    }
+
+    private static void WriteUInt64LittleEndian(Span<byte> destination, ulong value)
+    {
+        for (var i = 0; i < sizeof(ulong); i++)
+            destination[i] = (byte)(value >> (i * 8));
+    }
+
+    private static ulong ReadUInt64LittleEndian(ReadOnlySpan<byte> source)
+    {
+        ulong value = 0;
+        for (var i = 0; i < sizeof(ulong); i++)
+            value |= (ulong)source[i] << (i * 8);
+
+        return value;
     }
 }
