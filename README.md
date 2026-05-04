@@ -17,16 +17,6 @@ You still get named values, bitwise operators, and compact storage, but the flag
 dotnet add package InfiniteEnumFlags
 ```
 
-## Supported frameworks
-
-The package targets:
-
-- `net10.0`
-- `net8.0`
-- `net7.0`
-- `net6.0`
-- `netstandard2.1`
-
 ## Define flags
 
 Create a class that inherits from `InfiniteEnum<T>` and expose each value as a static `Flag<T>`.
