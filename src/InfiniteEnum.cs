@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace InfiniteEnumFlags;
 
@@ -14,14 +13,14 @@ public abstract class InfiniteEnum<T>
     {
         return typeof(T)
             .GetFields(bindingFlags)
-            .Where(f => f.FieldType == typeof(Flag<T>))
+            .Where(IsFlagField)
             .Select(f => f.Name);
     }
 
     public static IEnumerable<string> GetNames(Flag<T> enumFlag, BindingFlags bindingFlags)
     {
-        return GetKeyValues()
-            .Where(x => enumFlag.HasFlag(x.Value))
+        return GetKeyValues(bindingFlags)
+            .Where(x => x.Value.IsEmpty ? enumFlag.IsEmpty : enumFlag.HasAllFlags(x.Value))
             .Select(x => x.Key);
     }
 
@@ -39,7 +38,7 @@ public abstract class InfiniteEnum<T>
     {
         return typeof(T)
             .GetFields(bindingFlags)
-            .Where(f => f.FieldType == typeof(Flag<T>))
+            .Where(IsFlagField)
             .ToDictionary(f => f.Name, f => (Flag<T>)f.GetValue(null)!);
     }
 
@@ -50,20 +49,76 @@ public abstract class InfiniteEnum<T>
 
     public static Flag<T>? FromName(string name, BindingFlags bindingFlags)
     {
-        return typeof(T)
-            .GetField(name, bindingFlags)?
-            .GetValue(null) as Flag<T>;
+        var field = typeof(T).GetField(name, bindingFlags);
+        return field is not null && IsFlagField(field)
+            ? field.GetValue(null) as Flag<T>
+            : null;
+    }
+
+    public static bool TryFromName(string name, out Flag<T> flag)
+    {
+        return TryFromName(name, BindingFlags.Public | BindingFlags.Static, out flag);
+    }
+
+    public static bool TryFromName(string name, BindingFlags bindingFlags, out Flag<T> flag)
+    {
+        var result = FromName(name, bindingFlags);
+        flag = result ?? new Flag<T>(-1);
+        return result is not null;
+    }
+
+    public static Flag<T> FromNames(params string[] names)
+    {
+        return FromNames((IEnumerable<string>)names);
+    }
+
+    public static Flag<T> FromNames(IEnumerable<string> names)
+    {
+        var keyValues = GetKeyValues();
+        var result = new Flag<T>(-1);
+
+        foreach (var name in names)
+        {
+            if (!keyValues.TryGetValue(name, out var flag))
+                throw new ArgumentException($"Unknown flag name '{name}'.", nameof(names));
+
+            result |= flag;
+        }
+
+        return result;
+    }
+
+    public static bool TryFromNames(IEnumerable<string> names, out Flag<T> flag)
+    {
+        var keyValues = GetKeyValues();
+        var result = new Flag<T>(-1);
+
+        foreach (var name in names)
+        {
+            if (!keyValues.TryGetValue(name, out var item))
+            {
+                flag = new Flag<T>(-1);
+                return false;
+            }
+
+            result |= item;
+        }
+
+        flag = result;
+        return true;
     }
 
     public static Flag<T> All
     {
         get
         {
-            var count = typeof(T)
+            var flags = typeof(T)
                 .GetFields(BindingFlags.Public | BindingFlags.Static)
-                .Count(f => f.FieldType == typeof(Flag<T>) ||
-                            f.FieldType.BaseType == typeof(Flag<T>));
-            return new Flag<T>(new BitArray(count - 1, true));
+                .Where(IsFlagField)
+                .Select(f => (Flag<T>)f.GetValue(null)!)
+                .Where(f => !f.IsEmpty);
+
+            return flags.Aggregate(new Flag<T>(-1), (current, flag) => current | flag);
         }
     }
 
@@ -77,5 +132,10 @@ public abstract class InfiniteEnum<T>
     public static Flag<T> FromUniqueId(string id, string? salt)
     {
         return Flag<T>.FromUniqueId(id, salt);
+    }
+
+    private static bool IsFlagField(FieldInfo field)
+    {
+        return typeof(Flag<T>).IsAssignableFrom(field.FieldType);
     }
 }

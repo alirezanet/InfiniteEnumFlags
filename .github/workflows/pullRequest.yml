@@ -14,10 +14,10 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 10.0.x
     - name: Restore dependencies
-      run: dotnet restore cicd.sln
+      run: dotnet restore InfiniteEnumFlags.sln
     - name: Build
-      run: dotnet build cicd.sln -c Release --no-restore
+      run: dotnet build InfiniteEnumFlags.sln -c Release --no-restore
     - name: Test
-      run: dotnet test cicd.sln -c Release --no-build --verbosity normal
+      run: dotnet test InfiniteEnumFlags.sln -c Release --no-build --verbosity normal

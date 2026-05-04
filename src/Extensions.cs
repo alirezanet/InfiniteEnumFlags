@@ -4,7 +4,12 @@ public static class Extensions
 {
     public static bool HasFlag<T>(this Flag<T> a, Flag<T> b)
     {
-        return (a & b) != new Flag<T>(-1);
+        return !(a & b).IsEmpty;
+    }
+
+    public static bool HasAllFlags<T>(this Flag<T> a, Flag<T> b)
+    {
+        return (a & b) == b;
     }
 
     public static Flag<T> SetFlag<T>(this Flag<T> a, params Flag<T>[] b)

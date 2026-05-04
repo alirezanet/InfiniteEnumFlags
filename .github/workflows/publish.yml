@@ -15,13 +15,13 @@ jobs:
          - name: Setup .NET
            uses: actions/setup-dotnet@v3
            with:
-              dotnet-version: 8.0.x
+              dotnet-version: 10.0.x
          - name: Restore dependencies
-           run: dotnet restore cicd.sln
+           run: dotnet restore InfiniteEnumFlags.sln
          - name: Build
-           run: dotnet build cicd.sln --configuration Release --no-restore
+           run: dotnet build InfiniteEnumFlags.sln --configuration Release --no-restore
          - name: Test
-           run: dotnet test cicd.sln --configuration Release --no-build --verbosity normal
+           run: dotnet test InfiniteEnumFlags.sln --configuration Release --no-build --verbosity normal
          - name: Publish InfiniteEnumFlags
            uses: alirezanet/publish-nuget@v3.0.0
            with:

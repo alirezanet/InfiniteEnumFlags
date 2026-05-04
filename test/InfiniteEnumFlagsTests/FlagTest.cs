@@ -125,6 +125,75 @@ public class FlagTest
     }
 
     [Fact]
+    public void EqualFlags_WithDifferentLengths_ShouldHaveSameHashCode()
+    {
+        // Arrange
+        var e1 = new Flag(5, 10);
+        var e2 = new Flag(5, 50);
+        var flags = new HashSet<Flag> { e1, e2 };
+
+        // Assert
+        e1.Should().Be(e2);
+        e1.GetHashCode().Should().Be(e2.GetHashCode());
+        flags.Should().ContainSingle();
+    }
+
+    [Fact]
+    public void EqualityOperators_WithNull_ShouldNotThrow()
+    {
+        // Arrange
+        Flag? flag = new(1);
+        Flag? empty = null;
+
+        // Assert
+        (flag == empty).Should().BeFalse();
+        (empty == flag).Should().BeFalse();
+        (empty == null).Should().BeTrue();
+        (flag != null).Should().BeTrue();
+    }
+
+    [Fact]
+    public void BitArrayConstructor_ShouldCopyInput()
+    {
+        // Arrange
+        var bits = new System.Collections.BitArray(2, false);
+        bits.Set(0, true);
+
+        // Act
+        var flag = new Flag(bits);
+        bits.Set(1, true);
+
+        // Assert
+        flag.Should().Be(new Flag(0));
+        flag.Should().NotBe(new Flag(0) | new Flag(1));
+    }
+
+    [Fact]
+    public void Count_ShouldReturnNumberOfEnabledFlags()
+    {
+        // Arrange
+        var flags = new Flag(1) | new Flag(5) | new Flag(130);
+
+        // Assert
+        flags.Count.Should().Be(3);
+        flags.IsEmpty.Should().BeFalse();
+        new Flag(-1).Count.Should().Be(0);
+        new Flag(-1).IsEmpty.Should().BeTrue();
+    }
+
+    [Theory]
+    [InlineData(-2, null)]
+    [InlineData(2, 2)]
+    public void Constructor_WithInvalidArguments_ShouldThrow(int index, int? length)
+    {
+        // Act
+        var action = () => new Flag(index, length);
+
+        // Assert
+        action.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
     public void FromBase64_SameLength_MustHaveEqualBase64String()
     {
         // Arrange
@@ -216,5 +285,17 @@ public class FlagTest
         var new_features = Flag.FromUniqueId(id, salt);
 
         features.Should().Be(new_features);
+    }
+
+    [Fact]
+    public void FromUniqueId_WithWrongSalt_ShouldThrow()
+    {
+        const string salt = "salt";
+        var features = new Flag(15) | new Flag(12) | new Flag(110);
+        var id = features.ToUniqueId(salt);
+
+        var action = () => Flag.FromUniqueId(id, "wrong-salt");
+
+        action.Should().Throw<InvalidOperationException>();
     }
 }

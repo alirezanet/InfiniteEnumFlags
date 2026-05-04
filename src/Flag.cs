@@ -4,10 +4,34 @@ using System.Text;
 
 namespace InfiniteEnumFlags;
 
-public class Flag<T>
+public class Flag<T> : IEquatable<Flag<T>>
 {
     internal readonly BitArray Bits;
     public int Length => Bits.Length;
+    public bool IsEmpty
+    {
+        get
+        {
+            for (var i = 0; i < Bits.Length; i++)
+                if (Bits[i])
+                    return false;
+
+            return true;
+        }
+    }
+
+    public int Count
+    {
+        get
+        {
+            var count = 0;
+            for (var i = 0; i < Bits.Length; i++)
+                if (Bits[i])
+                    count++;
+
+            return count;
+        }
+    }
 
     /// <summary>
     /// 
@@ -16,8 +40,19 @@ public class Flag<T>
     /// <param name="length">Number of total required bits</param>
     public Flag(int index, int? length = null)
     {
+        if (index < -1)
+            throw new ArgumentOutOfRangeException(nameof(index), "Flag index must be -1 or greater.");
+
         index++;
         length ??= index + 1;
+
+        if (length < 0)
+            throw new ArgumentOutOfRangeException(nameof(length), "Length must be zero or greater.");
+
+        if (length < index)
+            throw new ArgumentOutOfRangeException(
+                nameof(length),
+                "Length must be large enough to contain the flag index.");
 
         // None
         if (index == 0)
@@ -33,7 +68,7 @@ public class Flag<T>
 
     public Flag(BitArray new_value)
     {
-        Bits = new_value;
+        Bits = (BitArray)new_value.Clone();
     }
 
     public Flag(byte[] new_value)
@@ -56,18 +91,21 @@ public class Flag<T>
         return new Flag<T>(item.Bits);
     }
 
-    public static bool operator ==(Flag<T> item, Flag<T> item2)
+    public static bool operator ==(Flag<T>? item, Flag<T>? item2)
     {
-        return item.Equals(item2);
+        return item is null ? item2 is null : item.Equals(item2);
     }
 
-    public static bool operator !=(Flag<T> item, Flag<T> item2)
+    public static bool operator !=(Flag<T>? item, Flag<T>? item2)
     {
         return !(item == item2);
     }
 
     public static Flag<T> operator |(Flag<T> left, Flag<T> right)
     {
+        if (left is null) throw new ArgumentNullException(nameof(left));
+        if (right is null) throw new ArgumentNullException(nameof(right));
+
         var (nLeft, nRight) = FixLength(left, right);
         return new Flag<T>(nLeft.Or(nRight));
     }
@@ -75,34 +113,37 @@ public class Flag<T>
     private static (BitArray nLeft, BitArray nRight) FixLength(Flag<T> left, Flag<T> right)
     {
         var length = Math.Max(left.Bits.Length, right.Bits.Length);
-        var nLeft = new BitArray(length, false);
+        var nLeft = (BitArray)left.Bits.Clone();
+        nLeft.Length = length;
 
-        for (var i = 0; i < left.Bits.Length; i++)
-            if (left.Bits[i])
-                nLeft.Set(i, true);
-
-        var nRight = new BitArray(length, false);
-        for (var i = 0; i < right.Bits.Length; i++)
-            if (right.Bits[i])
-                nRight.Set(i, true);
+        var nRight = (BitArray)right.Bits.Clone();
+        nRight.Length = length;
 
         return (nLeft, nRight);
     }
 
     public static Flag<T> operator &(Flag<T> left, Flag<T> right)
     {
+        if (left is null) throw new ArgumentNullException(nameof(left));
+        if (right is null) throw new ArgumentNullException(nameof(right));
+
         var (nLeft, nRight) = FixLength(left, right);
         return new Flag<T>(nLeft.And(nRight));
     }
 
     public static Flag<T> operator ^(Flag<T> left, Flag<T> right)
     {
+        if (left is null) throw new ArgumentNullException(nameof(left));
+        if (right is null) throw new ArgumentNullException(nameof(right));
+
         var (nLeft, nRight) = FixLength(left, right);
         return new Flag<T>(nLeft.Xor(nRight));
     }
 
     public static Flag<T> operator ~(Flag<T> item)
     {
+        if (item is null) throw new ArgumentNullException(nameof(item));
+
         var x = (BitArray)item.Bits.Clone();
         return new Flag<T>(x.Not());
     }
@@ -111,15 +152,12 @@ public class Flag<T>
 
     public string ToBinaryString()
     {
-        var sb = new StringBuilder();
+        var chars = new char[Bits.Count];
 
         for (var i = 0; i < Bits.Count; i++)
-        {
-            var c = Bits[i] ? '1' : '0';
-            sb.Append(c);
-        }
+            chars[i] = Bits[i] ? '1' : '0';
 
-        return sb.ToString();
+        return new string(chars);
     }
 
     public string ToUniqueId() => ToUniqueId(null);
@@ -141,17 +179,7 @@ public class Flag<T>
 
     public string ToBase64Trimmed()
     {
-        var bytes = ToBytes().AsSpan();
-        var index = 0;
-        for (var i = bytes.Length - 1; i >= 0; i--)
-        {
-            if (bytes[i] == 0) continue;
-            index = i + 1;
-            break;
-        }
-
-        var key = bytes[..index].ToArray();
-        return Convert.ToBase64String(key);
+        return Convert.ToBase64String(GetNormalizedBytes());
     }
 
     public string ToBase64String()
@@ -162,28 +190,24 @@ public class Flag<T>
 
     public override bool Equals(object? obj)
     {
-        if (obj is not Flag<T> item) return false;
+        return Equals(obj as Flag<T>);
+    }
 
-        bool SequenceEqual(Flag<T> bigger, Flag<T> smaller)
-        {
-            var bytes = new byte[(bigger.Bits.Length - 1) / 8 + 1];
-            smaller.Bits.CopyTo(bytes, 0);
-            return bigger.ToBytes().SequenceEqual(bytes);
-        }
+    public bool Equals(Flag<T>? other)
+    {
+        if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
 
-        if (item.Bits.Length > Bits.Length)
-            return SequenceEqual(item, this);
-
-        if (item.Bits.Length < Bits.Length)
-            return SequenceEqual(this, item);
-
-        return item.Bits.Length == Bits.Length &&
-               ((BitArray)item.Bits.Clone()).Xor(Bits).OfType<bool>().All(e => !e);
+        return GetNormalizedBytes().SequenceEqual(other.GetNormalizedBytes());
     }
 
     public override int GetHashCode()
     {
-        return Bits.GetHashCode() * 31;
+        var hashCode = new HashCode();
+        foreach (var value in GetNormalizedBytes())
+            hashCode.Add(value);
+
+        return hashCode.ToHashCode();
     }
 
     public static Flag<T> FromBase64(string base64)
@@ -207,6 +231,9 @@ public class Flag<T>
 
         var saltBytes = Encoding.UTF8.GetBytes(salt);
         var saltIndex = bytes.Length - saltBytes.Length;
+        if (saltIndex < 0)
+            throw new InvalidOperationException("salt is not valid");
+
         var actualSalt = bytes.AsSpan(saltIndex);
         if (!actualSalt.SequenceEqual(saltBytes))
             throw new InvalidOperationException("salt is not valid");
@@ -230,5 +257,17 @@ public class Flag<T>
     public BitArray ToBitArray()
     {
         return (Bits.Clone() as BitArray)!;
+    }
+
+    private byte[] GetNormalizedBytes()
+    {
+        var bytes = ToBytes();
+        var length = bytes.Length;
+
+        while (length > 0 && bytes[length - 1] == 0)
+            length--;
+
+        if (length == bytes.Length) return bytes;
+        return bytes[..length];
     }
 }

@@ -44,6 +44,26 @@ public class ExtensionsTest
 
         // Assert
         result.Should().BeTrue();
+        features.HasFlag(Enums.TestEnum.F1 | Enums.TestEnum.F2).Should().BeTrue();
+    }
+
+    [Fact]
+    public void HasFlag_None_ShouldBeFalse()
+    {
+        var flags = Enums.TestEnum.F1 | Enums.TestEnum.F2;
+
+        flags.HasFlag(Enums.TestEnum.None).Should().BeFalse();
+        Enums.TestEnum.None.HasFlag(Enums.TestEnum.None).Should().BeFalse();
+    }
+
+    [Fact]
+    public void HasAllFlags_ShouldReturnTrueOnlyWhenAllRequestedFlagsExist()
+    {
+        var features = Enums.TestEnum.F5 | Enums.TestEnum.F1 | Enums.TestEnum.F2;
+
+        features.HasAllFlags(Enums.TestEnum.F5 | Enums.TestEnum.F1).Should().BeTrue();
+        Enums.TestEnum.F1.HasAllFlags(features).Should().BeFalse();
+        Enums.TestEnum.F1.HasAllFlags(Enums.TestEnum.None).Should().BeTrue();
     }
 
     [Fact]
