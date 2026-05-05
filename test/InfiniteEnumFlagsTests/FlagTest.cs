@@ -25,7 +25,7 @@ public class FlagTest
 
         // Act
         var bitArray = x.ToBitArray();
-        var array = new int[1];
+        var array = new int[(bitArray.Length + 31) / 32];
         bitArray.CopyTo(array, 0);
         var actual = array[0];
 
@@ -76,18 +76,20 @@ public class FlagTest
     [InlineData(1024)]
     [InlineData(81205)]
     // [InlineData(9120595)]
-    public void ToBase64_Under32Items_ShouldReturnSameHex(int index)
+    public void ToBase64_Under32Items_ShouldRoundTrip(int index)
     {
         // Arrange
         var x = new Flag(index);
-        var integerValue = BigInteger.Pow(2, index);
-        var expected = Convert.ToBase64String(integerValue.ToByteArray());
+        var bigBytes = BigInteger.Pow(2, index).ToByteArray();
+        var bigEnd = bigBytes.Length;
+        while (bigEnd > 0 && bigBytes[bigEnd - 1] == 0) bigEnd--;
+        var expected = Convert.ToBase64String(bigBytes, 0, bigEnd);
 
         // Act
-        var actual = x.ToBase64String();
+        var actual = x.ToBase64Trimmed();
 
         // Assert
-        expected.Should().Be(actual);
+        actual.Should().Be(expected);
         actual.Length.Should().BeGreaterThan(0);
 
         x.Should().Be(Flag.FromBase64(actual));
@@ -229,7 +231,8 @@ public class FlagTest
         newEnum2.Should().Be(e2);
         newEnum1.Should().Be(newEnum2);
 
-        base1.Should().NotBe(base2);
+        // Canonical: equal flags now produce identical base64.
+        base1.Should().Be(base2);
     }
 
     [Theory]
@@ -269,12 +272,15 @@ public class FlagTest
     [Fact]
     public void ToId_WithCommonFlags_ShouldReturnShortReadableStorageIds()
     {
+        // Format: [varint K][body]; K=0 => dense bytes, K>0 => K delta-varint indices.
+        // Encoder picks whichever is shorter (ties => dense).
         new Flag(-1).ToId().Should().Be("0");
-        new Flag(0).ToId().Should().Be("AQ");
-        new Flag(1).ToId().Should().Be("Ag");
-        new Flag(2).ToId().Should().Be("BA");
-        (new Flag(0) | new Flag(1)).ToId().Should().Be("Aw");
-        new Flag(100).ToId().Should().Be("AAAAAAAAAAAAAAAAEA");
+        new Flag(0).ToId().Should().Be("AAE");           // dense [0x00, 0x01]
+        new Flag(1).ToId().Should().Be("AAI");           // dense [0x00, 0x02]
+        new Flag(2).ToId().Should().Be("AAQ");           // dense [0x00, 0x04]
+        (new Flag(0) | new Flag(1)).ToId().Should().Be("AAM"); // dense [0x00, 0x03]
+        // Sparse encoding wins big for high-index flags:
+        new Flag(100).ToId().Should().Be("AWQ");         // sparse [0x01, 0x64]
     }
 
     [Fact]
@@ -333,7 +339,7 @@ public class FlagTest
         var rawId = flag.ToId();
         var scopedId = flag.ToScopedId();
 
-        rawId.Should().Be("AQ");
+        rawId.Should().Be("AAE");
         scopedId.Should().NotBe(rawId);
         scopedId.Should().NotContain(rawId);
     }
