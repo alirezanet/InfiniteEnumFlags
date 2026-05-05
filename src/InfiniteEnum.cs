@@ -122,6 +122,19 @@ public abstract class InfiniteEnum<T>
         }
     }
 
+    /// <summary>
+    /// Returns every declared flag on <typeparamref name="T"/> except the bits
+    /// in <paramref name="flag"/>. This is the "infinite enum" replacement for
+    /// the native enum idiom <c>~SomeEnum.X</c>, which has no well-defined
+    /// meaning over an unbounded bit space.
+    /// </summary>
+    public static Flag<T> AllExcept(Flag<T> flag)
+    {
+        if (flag is null) throw new ArgumentNullException(nameof(flag));
+        var all = All;
+        return flag.IsEmpty ? all : all & ~flag;
+    }
+
     public static Flag<T> FromBase64(string base64)
     {
         return Flag<T>.FromBase64(base64);

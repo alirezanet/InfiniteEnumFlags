@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using InfiniteEnumFlags;
 using InfiniteEnumFlagsTests.Enums;
 using Xunit;
 
@@ -17,6 +18,34 @@ public class InfiniteEnumTest
 
         // Assert
         actual.Should().Be(expected);
+    }
+
+    [Fact]
+    public void AllExcept_Should_Return_AllDeclaredFlagsMinusGiven()
+    {
+        // Arrange
+        var removed = TestEnum.F2 | TestEnum.F5;
+        var expected = TestEnum.F1 | TestEnum.F3 | TestEnum.F4 |
+                       TestEnum.F6 | TestEnum.F7 | TestEnum.F8;
+
+        // Act
+        var actual = TestEnum.AllExcept(removed);
+
+        // Assert
+        actual.Should().Be(expected);
+        actual.HasFlag(removed).Should().BeFalse();
+    }
+
+    [Fact]
+    public void AllExcept_None_Should_Equal_All()
+    {
+        TestEnum.AllExcept(TestEnum.None).Should().Be(TestEnum.All);
+    }
+
+    [Fact]
+    public void AllExcept_All_Should_Equal_None()
+    {
+        TestEnum.AllExcept(TestEnum.All).Should().Be(TestEnum.None);
     }
 
     [Fact]
