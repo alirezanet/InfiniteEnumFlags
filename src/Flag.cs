@@ -28,6 +28,7 @@ public class Flag<T> : IEquatable<Flag<T>>
 
     internal Flag(ulong[] canonicalWords) : this(canonicalWords, true) { }
 
+    /// <summary>Creates an empty (None) flag with no bits set.</summary>
     public Flag()
     {
         _words = Array.Empty<ulong>();
@@ -67,12 +68,14 @@ public class Flag<T> : IEquatable<Flag<T>>
         _words = words;
     }
 
+    /// <summary>Creates a flag from a <see cref="BitArray"/>. The bits are copied; the original is not modified.</summary>
     public Flag(BitArray bits)
     {
         if (bits is null) throw new ArgumentNullException(nameof(bits));
         _words = WordsFromBitArray(bits);
     }
 
+    /// <summary>Creates a flag from a little-endian byte array (same format as <see cref="ToBytes"/>).</summary>
     public Flag(byte[] bytes)
     {
         if (bytes is null) throw new ArgumentNullException(nameof(bytes));
@@ -81,8 +84,10 @@ public class Flag<T> : IEquatable<Flag<T>>
 
     // ------------------------------------------------------------------ properties
 
+    /// <summary><c>true</c> when no bits are set (equivalent to <c>None</c>).</summary>
     public bool IsEmpty => _words.Length == 0;
 
+    /// <summary>The number of set bits (population count).</summary>
     public int Count
     {
         get
@@ -102,21 +107,26 @@ public class Flag<T> : IEquatable<Flag<T>>
 
     // ------------------------------------------------------------------ operators
 
+    /// <summary>Converts a typed <see cref="Flag{T}"/> to an untyped <see cref="Flag"/>.</summary>
     public static explicit operator Flag(Flag<T> item)
     {
         if (item is null) throw new ArgumentNullException(nameof(item));
         return new Flag(CloneWords(item._words));
     }
 
+    /// <summary>Converts an untyped <see cref="Flag"/> to a typed <see cref="Flag{T}"/>.</summary>
     public static explicit operator Flag<T>(Flag item)
     {
         if (item is null) throw new ArgumentNullException(nameof(item));
         return new Flag<T>(CloneWords(item.GetWords()), true);
     }
 
+    /// <summary>Returns <c>true</c> when both flags represent the same set of bits.</summary>
     public static bool operator ==(Flag<T>? a, Flag<T>? b) => a is null ? b is null : a.Equals(b);
+    /// <inheritdoc cref="operator =="/>
     public static bool operator !=(Flag<T>? a, Flag<T>? b) => !(a == b);
 
+    /// <summary>Returns a flag with all bits that are set in either <paramref name="a"/> or <paramref name="b"/>.</summary>
     public static Flag<T> operator |(Flag<T> a, Flag<T> b)
     {
         if (a is null) throw new ArgumentNullException(nameof(a));
@@ -133,6 +143,7 @@ public class Flag<T> : IEquatable<Flag<T>>
         return new Flag<T>(result, true);
     }
 
+    /// <summary>Returns a flag with only the bits that are set in both <paramref name="a"/> and <paramref name="b"/>.</summary>
     public static Flag<T> operator &(Flag<T> a, Flag<T> b)
     {
         if (a is null) throw new ArgumentNullException(nameof(a));
@@ -144,6 +155,7 @@ public class Flag<T> : IEquatable<Flag<T>>
         return new Flag<T>(Canonicalize(result), true);
     }
 
+    /// <summary>Returns a flag with bits set in one operand but not both (XOR / toggle).</summary>
     public static Flag<T> operator ^(Flag<T> a, Flag<T> b)
     {
         if (a is null) throw new ArgumentNullException(nameof(a));
@@ -159,6 +171,11 @@ public class Flag<T> : IEquatable<Flag<T>>
         return new Flag<T>(Canonicalize(result), true);
     }
 
+    /// <summary>
+    /// Inverts bits within the canonical storage of <paramref name="a"/> (word-aligned, 64 bits per word).
+    /// <para><b>Note:</b> <c>~None</c> returns <c>None</c> — there is no maximum bit index so a universal
+    /// complement is undefined. Use <see cref="InfiniteEnum{T}.AllExcept"/> to get "all declared flags except X".</para>
+    /// </summary>
     public static Flag<T> operator ~(Flag<T> a)
     {
         if (a is null) throw new ArgumentNullException(nameof(a));
@@ -170,8 +187,10 @@ public class Flag<T> : IEquatable<Flag<T>>
 
     // ------------------------------------------------------------------ equality
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj) => Equals(obj as Flag<T>);
 
+    /// <summary>Compares two flags by their canonical bit contents. Equal flags compare equal regardless of construction length.</summary>
     public bool Equals(Flag<T>? other)
     {
         if (other is null) return false;
@@ -180,6 +199,7 @@ public class Flag<T> : IEquatable<Flag<T>>
         return _words.AsSpan().SequenceEqual(other._words.AsSpan());
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
         var h = new HashCode();
@@ -211,6 +231,7 @@ public class Flag<T> : IEquatable<Flag<T>>
         return bytes;
     }
 
+    /// <summary>Returns a copy of the flag's bits as a <see cref="BitArray"/>.</summary>
     public BitArray ToBitArray()
     {
         if (_words.Length == 0) return new BitArray(0);
@@ -223,15 +244,19 @@ public class Flag<T> : IEquatable<Flag<T>>
     /// <inheritdoc cref="BitArray.CopyTo" />
     public void CopyTo(Array array, int index = 0) => ToBitArray().CopyTo(array, index);
 
+    /// <summary>Returns standard padded Base64 of the full word-aligned byte representation. Use <see cref="ToBase64Trimmed"/> for a canonical form.</summary>
     public string ToBase64String() => Convert.ToBase64String(ToBytesPadded());
+    /// <summary>Returns standard padded Base64 of the canonical trimmed bytes. Equal flags always return the same string.</summary>
     public string ToBase64Trimmed() => Convert.ToBase64String(ToBytes());
 
+    /// <summary>Restores a flag from a Base64 string produced by <see cref="ToBase64String"/> or <see cref="ToBase64Trimmed"/>.</summary>
     public static Flag<T> FromBase64(string base64)
     {
         if (base64 is null) throw new ArgumentNullException(nameof(base64));
         return new Flag<T>(Convert.FromBase64String(base64));
     }
 
+    /// <summary>Returns the bit pattern as <c>'0'</c>/<c>'1'</c> characters, least-significant bit first. Useful for debugging.</summary>
     public string ToBinaryString()
     {
         if (_words.Length == 0) return string.Empty;
@@ -259,8 +284,14 @@ public class Flag<T> : IEquatable<Flag<T>>
     //     (e.g. bit 1000 alone => 3 bytes instead of 126).
     //   - The leading varint K disambiguates the two formats with no extra tag byte.
 
+    /// <summary>Returns <see cref="ToId"/>. Suitable for logging and debugging.</summary>
     public override string ToString() => ToId();
 
+    /// <summary>
+    /// Returns a compact, URL-safe base64url ID. The empty flag encodes as <c>"0"</c>.
+    /// The format is self-describing (dense or sparse) and chosen for minimum length.
+    /// Equal flags always produce the same ID.
+    /// </summary>
     public string ToId()
     {
         if (_words.Length == 0) return "0";
@@ -268,6 +299,8 @@ public class Flag<T> : IEquatable<Flag<T>>
         return Base64UrlEncode(payload);
     }
 
+    /// <summary>Restores a flag from a string produced by <see cref="ToId"/>.</summary>
+    /// <exception cref="FormatException">The string is not a valid flag ID.</exception>
     public static Flag<T> FromId(string id)
     {
         if (id is null) throw new ArgumentNullException(nameof(id));
@@ -276,8 +309,13 @@ public class Flag<T> : IEquatable<Flag<T>>
         return new Flag<T>(DecodePayload(bytes), true);
     }
 
+    /// <summary>Returns a scope-bound ID using the full type name of <typeparamref name="T"/> as scope. See <see cref="ToScopedId(string)"/>.</summary>
     public string ToScopedId() => ToScopedId(GetDefaultScope());
 
+    /// <summary>
+    /// Returns a compact, URL-safe ID that embeds a 2-byte scope fingerprint and masks the payload
+    /// so the raw flag value is not visible. Decoding with the wrong scope throws <see cref="InvalidOperationException"/>.
+    /// </summary>
     public string ToScopedId(string scope)
     {
         if (scope is null) throw new ArgumentNullException(nameof(scope));
@@ -291,8 +329,12 @@ public class Flag<T> : IEquatable<Flag<T>>
         return Base64UrlEncode(output);
     }
 
+    /// <summary>Restores a flag from a scoped ID using the full type name of <typeparamref name="T"/> as scope.</summary>
     public static Flag<T> FromScopedId(string id) => FromScopedId(id, GetDefaultScope());
 
+    /// <summary>Restores a flag from a scoped ID produced by <see cref="ToScopedId(string)"/>.</summary>
+    /// <exception cref="InvalidOperationException">The ID was produced with a different scope.</exception>
+    /// <exception cref="FormatException">The string is not a valid scoped flag ID.</exception>
     public static Flag<T> FromScopedId(string id, string scope)
     {
         if (id is null) throw new ArgumentNullException(nameof(id));

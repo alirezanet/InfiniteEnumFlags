@@ -2,6 +2,10 @@ using System.Collections;
 
 namespace InfiniteEnumFlags;
 
+/// <summary>
+/// Untyped variant of <see cref="Flag{T}"/> (uses <c>object</c> as the type parameter).
+/// Prefer <see cref="Flag{T}"/> for type-safe enum flag values.
+/// </summary>
 public class Flag : Flag<object>
 {
     public Flag() : base()
