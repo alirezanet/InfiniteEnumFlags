@@ -133,9 +133,9 @@ var allPermissions = Permissions.All;
 
 ## Store and restore values
 
-Use `ToId` when you need a compact string value for storage.
-
-IDs are canonical: equal flags produce the same ID even if they were created with different internal bit lengths. The format is normalized bytes encoded as unpadded base64url, with `"0"` reserved for `None`.
+Use `ToId` when you need a compact string value for storage. IDs are URL-safe,
+filename-safe, and database-friendly (alphabet `A-Z a-z 0-9 - _`, plus literal
+`"0"` for `None`).
 
 ```csharp
 var permissions = Permissions.ReadUsers | Permissions.ViewReports;
@@ -146,45 +146,96 @@ var restored = Permissions.FromId(id);
 Console.WriteLine(permissions == restored); // true
 ```
 
-Small values stay small:
+### Guarantees
+
+- **Canonical.** Equal flags always produce the same ID, regardless of the
+  internal bit length they were constructed with.
+- **Round-trip safe.** `Flag.FromId(flag.ToId()).Equals(flag)` for every value.
+- **Unique.** Different flag values always produce different IDs.
+- **Compact even at high indices.** The encoder picks between a dense byte
+  representation and a sparse delta-varint representation per value, whichever
+  is shorter. High-index flags don't blow up the ID size.
 
 | Value | ID |
 |---|---|
 | `None` | `0` |
-| `ReadUsers` | `AQ` |
-| `CreateUsers` | `Ag` |
-| `ReadUsers \| CreateUsers` | `Aw` |
-| `DeleteUsers` | `BA` |
+| `ReadUsers` (bit 0) | `AAE` |
+| `CreateUsers` (bit 1) | `AAI` |
+| `ReadUsers \| CreateUsers` | `AAM` |
+| `DeleteUsers` (bit 2) | `AAQ` |
+| `ViewReports` (bit 100) | `AWQ` |
 
-For plain padded base64 storage, use `ToBase64String`, `ToBase64Trimmed`, and `FromBase64`.
+A flag at bit `10000` is roughly `4` characters, not `~1700`. This makes
+`InfiniteEnumFlags` safe to use as a primary key, query parameter, or document
+identifier even for very sparse, high-index flag sets.
+
+> **Wire format**: `[varint K][body]`. `K == 0` means dense canonical bytes
+> follow. `K > 0` means `K` delta-encoded bit indices follow. The format is
+> self-describing — the decoder doesn't need a tag byte.
+
+For plain padded base64 storage (e.g. when integrating with systems that already
+expect base64), use `ToBase64String`, `ToBase64Trimmed`, and `FromBase64`.
 
 ### Scoped IDs
 
-`ToId` stores only the flag value. That keeps IDs tiny and close to native enum behavior.
+`ToId` stores only the flag value. That keeps IDs tiny and close to native enum
+behavior, but it also means an ID from one enum class can be syntactically valid
+for another.
 
-If values from different enum classes may share the same database column, queue, or API field, use scoped IDs:
+If values from different enum classes may share the same database column, queue,
+or API field — or if you want to detect IDs that were generated for a different
+context — use scoped IDs:
 
 ```csharp
 string id = permissions.ToScopedId();
 var restored = Permissions.FromScopedId(id);
 ```
 
-The default scope is the enum class name. You can override it when multiple enum classes should intentionally share the same ID space:
+The default scope is the enum class name. You can override it when multiple enum
+classes should intentionally share the same ID space, or when you want to bind
+IDs to a logical version:
 
 ```csharp
 string id = permissions.ToScopedId("permissions-v1");
 var restored = Permissions.FromScopedId(id, "permissions-v1");
 ```
 
-Scoped IDs are still compact, but they are not just a visible prefix. The scope changes the encoded value, so the raw value ID is not exposed inside the scoped ID.
+A scoped ID carries a 2-byte scope fingerprint and a masked payload, so:
+
+- The raw value ID does **not** appear verbatim inside a scoped ID.
+- `FromScopedId` throws `InvalidOperationException` when the scope doesn't match,
+  giving you a cheap sanity check against ID misuse across contexts.
+
+Scoped IDs are not a security boundary — they are a tamper-evident routing tag.
+Anything that needs cryptographic integrity should be signed separately.
+
+## Performance notes
+
+- Storage is a packed `ulong[]`, canonicalized so trailing zero words are
+  trimmed. `Flag(5, length: 10000)` and `Flag(5)` share the same single-word
+  representation.
+- Bitwise operators (`|`, `&`, `^`, `~`) operate 64 bits at a time and the JIT
+  auto-vectorizes the loops on x86 (AVX2) and ARM64 (NEON).
+- `Count` uses hardware `POPCNT` via `BitOperations.PopCount`.
+- `IsEmpty` is `O(1)`.
+- Equality is a single SIMD `Span<ulong>.SequenceEqual`.
+- Set-bit enumeration uses `TrailingZeroCount` — one CPU instruction per set bit
+  and zero work for empty words. This makes the sparse ID encoder cheap even for
+  very wide flag sets.
 
 ## Notes
 
 - `Flag<T>` values are immutable from public APIs.
-- Equality ignores trailing zero bits, so the same logical flags compare equal even if they were created with different internal lengths.
+- Equality is canonical: equal logical flags always compare equal *and* hash
+  equal, regardless of how they were constructed.
 - `None` is an empty flag set.
 - `HasFlag(None)` returns `false` because there are no bits to overlap.
-- `HasAllFlags(None)` returns `true`, because an empty requirement is always satisfied.
+- `HasAllFlags(None)` returns `true`, because an empty requirement is always
+  satisfied.
+
+## Supported targets
+
+`net6.0`, `net7.0`, `net8.0`, `net10.0`.
 
 ## License
 
