@@ -64,7 +64,7 @@ Supported operators:
 
 | Operator | Meaning | Example |
 |---|---|---|
-| `|` | add/combine flags | `ReadUsers | CreateUsers` |
+| `\|` | add/combine flags | `ReadUsers \| CreateUsers` |
 | `&` | keep only shared flags | `permissions & required` |
 | `^` | toggle flags | `permissions ^ DeleteUsers` |
 | `~` | invert known bits in the current value length | `~permissions` |
@@ -73,8 +73,8 @@ The helper methods mirror the common operators:
 
 | Method | Operator | Meaning |
 |---|---|---|
-| `SetFlag` | `|` | add flags |
-| `UnsetFlag` | `& ~` | remove flags |
+| `SetFlag` | `\|` | add flags |
+| `UnsetFlag` | `&~` | remove flags |
 | `ToggleFlag` | `^` | toggle flags |
 
 `HasFlag` checks for any overlap. This is the default because most permission-style checks ask: "does this value contain at least one of these flags?"
@@ -153,7 +153,7 @@ Small values stay small:
 | `None` | `0` |
 | `ReadUsers` | `AQ` |
 | `CreateUsers` | `Ag` |
-| `ReadUsers | CreateUsers` | `Aw` |
+| `ReadUsers \| CreateUsers` | `Aw` |
 | `DeleteUsers` | `BA` |
 
 For plain padded base64 storage, use `ToBase64String`, `ToBase64Trimmed`, and `FromBase64`.
