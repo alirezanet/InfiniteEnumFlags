@@ -235,7 +235,7 @@ Anything that needs cryptographic integrity should be signed separately.
 
 ## Supported targets
 
-`net6.0`, `net7.0`, `net8.0`, `net10.0`.
+`net6.0`, `net9.0`, `net8.0`, `net10.0`.
 
 ## License
 
